@@ -1,4 +1,6 @@
 <script>
+	import Menu from '$lib/components/Menu.svelte';
+
 	export let data;
 </script>
 
@@ -6,18 +8,9 @@
 	<nav>
 		<div class="max-w-5xl mx-auto py-5 px-5 flex flex-row gap-3 items-center">
 			<a href="/" class="font-bold text-xl text-white">poolpy</a>
-			{#if data.user}
-				<div class="ml-auto">{data.user.username}</div>
-				<form method="POST">
-					<button
-						formaction="?/logout"
-						type="submit"
-						class="px-3 py-1 border rounded-sm border-surface-500 text-surface-100 outline-none transition focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900 focus-visible:ring-primary-500 enabled:hover:bg-surface-800 enabled:hover:text-white"
-					>
-						Sign out
-					</button>
-				</form>
-			{/if}
+			<div class="ml-auto">
+				<Menu user={data.user} />
+			</div>
 		</div>
 	</nav>
 	<div class="max-w-5xl mx-auto">
