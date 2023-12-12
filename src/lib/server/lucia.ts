@@ -1,9 +1,16 @@
 import { lucia } from 'lucia';
 import { sveltekit } from 'lucia/middleware';
-import { dev } from '$app/environment';
 import { postgres as postgresAdapter } from '@lucia-auth/adapter-postgresql';
+import { google } from '@lucia-auth/oauth/providers';
+
+import { dev } from '$app/environment';
 import postgres from 'postgres';
-import { DATABASE_URL } from '$env/static/private';
+import {
+	DATABASE_URL,
+	GOOGLE_CLIENT_ID,
+	GOOGLE_CLIENT_SECRET,
+	GOOGLE_REDIRECT_URL
+} from '$env/static/private';
 
 const sql = postgres(DATABASE_URL);
 
@@ -21,6 +28,12 @@ export const auth = lucia({
 			username: data.username
 		};
 	}
+});
+
+export const googleAuth = google(auth, {
+	clientId: GOOGLE_CLIENT_ID,
+	clientSecret: GOOGLE_CLIENT_SECRET,
+	redirectUri: GOOGLE_REDIRECT_URL
 });
 
 export type Auth = typeof auth;

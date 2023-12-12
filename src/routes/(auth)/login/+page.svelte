@@ -1,5 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
+	import GoogleButton from '$lib/components/GoogleButton.svelte';
 	import toast from 'svelte-french-toast';
 	export let form;
 	$: {
@@ -35,14 +36,17 @@
 				Log In
 			</button>
 		</form>
+		<hr class="border-transparent border-b border-b-surface-800 my-5" />
+		<GoogleButton />
 		<div class="mt-4 w-full text-right">
 			<p class="text-sm text-right">
 				Don't have an account?
 				<a
 					href="/signup"
 					class="ml-1 text-center text-primary-700 font-medium transition hover:text-primary-600"
-					>Sign up</a
 				>
+					Sign up
+				</a>
 			</p>
 		</div>
 	</div>
