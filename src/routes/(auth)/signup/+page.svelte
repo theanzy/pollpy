@@ -12,7 +12,7 @@
 	}
 </script>
 
-<div class="max-w-5xl mx-auto px-2 min-h-[100dvh] flex flex-row justify-center items-center">
+<div class="max-w-5xl px-5 md:px-0 flex flex-row justify-center items-center w-full">
 	<div class="w-full max-w-lg">
 		<h1 class="text-surface-50 text-3xl font-semibold text-center mb-3">Sign up</h1>
 		<form method="post" class="flex flex-col gap-1 mx-auto" use:enhance>
