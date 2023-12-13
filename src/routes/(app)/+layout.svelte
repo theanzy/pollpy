@@ -1,5 +1,7 @@
 <script>
+	import CreatePollLink from '$lib/components/CreatePollLink.svelte';
 	import Menu from '$lib/components/Menu.svelte';
+	import UserButton from '$lib/components/UserButton.svelte';
 
 	export let data;
 </script>
@@ -7,9 +9,26 @@
 <main class="min-h-[100dvh] text-surface-200">
 	<nav>
 		<div class="max-w-5xl mx-auto py-5 px-5 flex flex-row gap-3 items-center">
-			<a href="/" class="font-bold text-xl text-white">poolpy</a>
-			<div class="ml-auto">
+			<a href="/" class="font-bold text-xl text-white mr-auto">poolpy</a>
+			<CreatePollLink class="text-lg" />
+			<div class="ml-auto flex flex-row gap-3 items-center">
 				<Menu user={data.user} />
+				{#if data.user}
+					<UserButton user={data.user} />
+				{:else}
+					<a
+						href="/signup"
+						class="hidden lg:block px-4 py-2 font-medium outline-none transition hover:text-secondary-300 text-secondary-500 focus-visible:text-secondary-300"
+					>
+						Sign up
+					</a>
+					<a
+						href="/login"
+						class="hidden lg:block border border-surface-600 bg-surface-950 px-4 py-2 rounded-sm font-medium outline-none transition hover:bg-surface-800 hover:text-white focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700"
+					>
+						Log in
+					</a>
+				{/if}
 			</div>
 		</div>
 	</nav>

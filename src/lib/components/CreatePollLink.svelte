@@ -1,6 +1,17 @@
+<script lang="ts">
+	import { cn } from '$lib/utils';
+
+	interface $$Props {
+		class?: string;
+	}
+</script>
+
 <a
 	href="/create"
-	class="outline-none focus-visible:text-primary-700 px-3 font-medium flex flex-row gap-2 items-center"
+	class={cn(
+		'outline-none transition focus-visible:text-primary-700 px-3 font-medium flex flex-row gap-2 items-center hover:text-primary-700',
+		$$restProps.class
+	)}
 >
 	<svg
 		class="h-5 w-5"

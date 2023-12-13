@@ -14,6 +14,7 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-postgresql": "^2.0.2",
 		"@lucia-auth/oauth": "^3.5.0",
+		"@popperjs/core": "^2.11.8",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.27.4",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
