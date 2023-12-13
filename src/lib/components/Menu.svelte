@@ -1,29 +1,15 @@
 <script lang="ts">
 	import { trapFocus } from '$lib/trapfocus';
 	import type { User } from 'lucia';
-	import { fly, type FlyParams } from 'svelte/transition';
 	import CreatePollLink from './CreatePollLink.svelte';
 	import SignoutLink from './SignoutLink.svelte';
 	import LoginLink from './LoginLink.svelte';
 	import SignupLink from './SignupLink.svelte';
+	import { fadeFly } from '$lib/transitions';
 
 	export let user: User | undefined;
 
 	let open = false;
-
-	function fadeFly(node: HTMLElement, options: FlyParams) {
-		const slideTrans = fly(node, options);
-		return {
-			duration: options.duration,
-			css: (t: number) => `
-				${slideTrans.css?.(t, 0)}
-				opacity: ${t};
-			`
-		};
-	}
-	$: {
-		console.log(user);
-	}
 </script>
 
 <button
