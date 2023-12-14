@@ -61,7 +61,7 @@
 			}
 		}}
 		role="menu"
-		class="[&>*]:px-4 py-3 max-w-sm min-w-[300px] rounded-sm shadow bg-surface-950 border border-surface-700"
+		class="[&>*]:px-4 py-3 max-w-sm min-w-[300px] rounded-sm shadow bg-surface-950 border border-surface-700 z-10"
 	>
 		<div>
 			<h2
