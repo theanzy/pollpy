@@ -12,7 +12,7 @@
 	export let className: string = '';
 
 	let select: HTMLSelectElement;
-	let value: string;
+	let value: string = items[0]?.value ?? '';
 	let expanded = false;
 	$: selectedItem = items.find((i) => i.value === value);
 
