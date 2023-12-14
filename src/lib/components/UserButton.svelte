@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { User } from 'lucia';
-	import { clickOutside } from '$lib/clickoutside';
 	import createPopperAction from '$lib/popover';
 	import CreatePollLink from './CreatePollLink.svelte';
 	import SignoutLink from './SignoutLink.svelte';
+	import { fadeFly } from '$lib/transitions';
+	import { fade } from 'svelte/transition';
 
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
 
@@ -19,10 +20,11 @@
 	}}
 />
 <button
-	on:click={() => {
-		open = true;
+	use:usePopperTrigger={{
+		onClick: () => {
+			open = !open;
+		}
 	}}
-	use:usePopperTrigger
 	aria-label="user menu"
 	class="hidden lg:grid place-items-center rounded-full border border-surface-700 w-9 h-9 transition enabled:hover:text-primary-100 enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700"
 >
@@ -41,19 +43,22 @@
 </button>
 {#if open}
 	<div
-		use:clickOutside={() => {
-			open = false;
-		}}
+		transition:fade={{ duration: 200 }}
 		use:usePopperContent={{
-			placement: 'bottom-end',
-			modifiers: [
-				{
-					name: 'offset',
-					options: {
-						offset: [-2, 5]
+			onClickOutside() {
+				open = false;
+			},
+			params: {
+				placement: 'bottom-end',
+				modifiers: [
+					{
+						name: 'offset',
+						options: {
+							offset: [-2, 5]
+						}
 					}
-				}
-			]
+				]
+			}
 		}}
 		role="menu"
 		class="[&>*]:px-4 py-3 max-w-sm min-w-[300px] rounded-sm shadow bg-surface-950 border border-surface-700"
