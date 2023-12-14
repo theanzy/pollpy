@@ -6,17 +6,24 @@
 	import Select from '$lib/components/Select.svelte';
 	import CheckmarkIcon from '$lib/components/icons/Checkmark.svelte';
 	import PictureIcon from '$lib/components/icons/Picture.svelte';
+	import FileUploadTrigger from '$lib/components/FileUploadTrigger.svelte';
+	import PictureButton from '$lib/components/PictureButton.svelte';
+	import XButton from '$lib/components/XButton.svelte';
 
 	let answers: {
 		id: string;
 		text: string;
-		image?: File[];
+		image?: File;
 	}[] = [
 		{
 			id: Math.random().toString(16).slice(2),
 			text: ''
 		}
 	];
+
+	let pollImageFile: File | null = null;
+
+	// use submit event
 	const handleSubmit: SubmitFunction = async ({
 		formElement,
 		formData,
@@ -49,7 +56,39 @@
 	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
 >
 	<label for="title" class="font-medium mb-1">Title</label>
-	<Input id="title" name="title" placeholder="Your question..." class="px-3 py-2" required />
+	<div class="relative">
+		<Input
+			id="title"
+			name="title"
+			placeholder="Your question..."
+			class="px-3 py-2 w-full"
+			required
+		/>
+		<div class="absolute top-1 right-1">
+			<FileUploadTrigger
+				trigger={PictureButton}
+				on:upload={(e) => {
+					pollImageFile = e.detail;
+				}}
+			/>
+		</div>
+	</div>
+	{#if pollImageFile}
+		<div class="relative mt-4 mb-2">
+			<XButton
+				class="absolute top-0 right-0"
+				aria-label="remove poll image"
+				on:click={() => {
+					pollImageFile = null;
+				}}
+			/>
+			<img
+				alt="pollImageFile"
+				class="max-h-[300px] w-auto mx-auto"
+				src={URL.createObjectURL(pollImageFile)}
+			/>
+		</div>
+	{/if}
 	<label for="description" class="font-medium mt-5 mb-1"
 		>Description <span class="text-surface-400">(optional)</span></label
 	>
@@ -59,24 +98,26 @@
 		class="rounded-sm bg-surface-700 text-surface-100 px-2 py-1 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400"
 	/>
 	<hr class="my-6 border-b border-surface-700" />
-	<label for="type" class="font-medium mb-1">Poll type</label>
-	<Select
-		id="type"
-		name="type"
-		className="mb-3"
-		items={[
-			{
-				label: 'Multiple Choice',
-				value: 'text',
-				icon: CheckmarkIcon
-			},
-			{
-				label: 'Image',
-				value: 'image',
-				icon: PictureIcon
-			}
-		]}
-	/>
+	<div class="mb-3 w-[50%]">
+		<label for="type" class="font-medium mb-1">Poll type</label>
+		<Select
+			id="type"
+			name="type"
+			className="w-full"
+			items={[
+				{
+					label: 'Multiple Choice',
+					value: 'text',
+					icon: CheckmarkIcon
+				},
+				{
+					label: 'Image',
+					value: 'image',
+					icon: PictureIcon
+				}
+			]}
+		/>
+	</div>
 	<label for="maxChoice" class="font-medium mb-1">Maximum Choices</label>
 	<Input
 		type="number"
@@ -87,7 +128,7 @@
 		placeholder="1"
 		class="px-3 py-2"
 	/>
-	<label for="anwers" class="font-medium mb-1 mt-3">Answers</label>
+	<p class="font-medium mb-1 mt-3">Answers</p>
 	<div class="flex flex-col gap-3 mb-4">
 		{#each answers as answer, idx (answer.id)}
 			<div class="relative">

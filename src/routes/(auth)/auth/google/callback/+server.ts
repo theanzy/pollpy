@@ -20,7 +20,6 @@ export const GET = async ({ url, cookies, locals }) => {
 			if (existingUser) {
 				return existingUser;
 			}
-			console.log('googleUser', googleUser);
 			const user = await createUser({
 				userId: googleUser.sub,
 				attributes: {
