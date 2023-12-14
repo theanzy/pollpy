@@ -6,10 +6,14 @@
 	import LoginLink from './LoginLink.svelte';
 	import SignupLink from './SignupLink.svelte';
 	import { fadeFly } from '$lib/transitions';
+	import { afterNavigate } from '$app/navigation';
 
 	export let user: User | undefined;
 
 	let open = false;
+	afterNavigate(() => {
+		open = false;
+	});
 </script>
 
 <button
@@ -42,7 +46,7 @@
 	}}
 />
 {#if open}
-	<div use:trapFocus class="bg-black/20 fixed inset-0 w-full h-full grid place-items-center">
+	<div use:trapFocus class="bg-black/20 fixed inset-0 w-full h-full grid place-items-center z-10">
 		<div
 			class="bg-surface-950 w-full h-[100dvh] flex flex-col rounded relative"
 			transition:fadeFly={{
