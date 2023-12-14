@@ -2,7 +2,7 @@
 	<button
 		formaction="/?/logout"
 		type="submit"
-		class="outline-none transition focus-visible:text-primary-700 flex flex-row items-center gap-2 hover:text-primary-700"
+		class="outline-none w-full transition focus-visible:text-primary-700 flex flex-row items-center gap-2 hover:text-primary-700"
 	>
 		<svg
 			class="w-5 h-5"
