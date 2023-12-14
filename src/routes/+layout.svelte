@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>polly</title>
+	<title>pollpy</title>
 	<meta name="description" content="straw pools" />
 	<meta name="robots" content="noindex nofollow" />
 </svelte:head>
