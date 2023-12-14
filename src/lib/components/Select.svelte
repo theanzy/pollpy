@@ -68,7 +68,7 @@
 <button
 	type="button"
 	class={cn(
-		'px-3 py-2 cursor-default bg-surface-700 rounded text-left outline-none transition flex flex-row items-center focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 focus-visible:ring-primary-700',
+		'px-3 py-2 cursor-default font-medium bg-surface-700 rounded text-left outline-none transition flex flex-row items-center focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 focus-visible:ring-primary-700',
 		className
 	)}
 	use:usePopperTrigger={{
@@ -143,7 +143,7 @@
 				}}
 				aria-selected={selected}
 				aria-label={item.label}
-				class="relative flex flex-row items-center px-4 py-2 select-none outline-none transition focus:bg-primary-700 focus:text-white"
+				class="relative flex flex-row items-center font-medium px-4 py-2 select-none outline-none transition focus:bg-primary-700 focus:text-white"
 			>
 				<svelte:component this={item.icon} class="w-6 h-6 mr-2" />
 				<span>{item.label}</span>
