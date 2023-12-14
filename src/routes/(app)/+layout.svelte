@@ -32,7 +32,7 @@
 			</div>
 		</div>
 	</nav>
-	<div class="max-w-5xl mx-auto">
+	<div class="max-w-5xl mx-auto px-5 py-3">
 		<slot />
 	</div>
 </main>

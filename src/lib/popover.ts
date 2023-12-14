@@ -16,6 +16,9 @@ export default function createPopperAction() {
 	function initialisePopper() {
 		if (popperTrigger && popperContent) {
 			popper = createPopper(popperTrigger, popperContent, popperParams);
+			if (popperTrigger.clientWidth > popperContent.clientWidth) {
+				popperContent.style.width = `${popperTrigger.clientWidth}px`;
+			}
 		}
 	}
 

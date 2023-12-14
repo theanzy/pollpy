@@ -1,6 +1,6 @@
 <form method="POST" class="px-3 w-full font-medium">
 	<button
-		formaction="?/logout"
+		formaction="/?/logout"
 		type="submit"
 		class="outline-none transition focus-visible:text-primary-700 flex flex-row items-center gap-2 hover:text-primary-700"
 	>

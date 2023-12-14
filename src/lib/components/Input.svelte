@@ -10,7 +10,7 @@
 <input
 	{...$$restProps}
 	class={cn(
-		'rounded-sm bg-surface-700 focus:bg-surface-600 text-surface-100 px-2 py-1 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900',
+		'rounded-sm bg-surface-700 text-surface-100 px-2 py-1 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400',
 		$$restProps.class
 	)}
 />
