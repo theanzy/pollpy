@@ -26,20 +26,48 @@ export default function createPopperAction() {
 		}
 	}
 
-	function usePopperTrigger(element: HTMLElement) {
+	function usePopperTrigger(
+		element: HTMLElement,
+		{
+			onClick
+		}: {
+			onClick?: () => void;
+		} = {}
+	) {
 		popperTrigger = element;
+		if (onClick) {
+			popperTrigger.addEventListener('click', onClick);
+		}
 		initialisePopper();
 		return {
 			destroy() {
+				if (onClick) {
+					popperTrigger?.removeEventListener('click', onClick);
+				}
 				popperTrigger = null;
 				destroyPopper();
 			}
 		};
 	}
-	function usePopperContent(element: HTMLElement, params?: PopperParams) {
+	function usePopperContent(
+		element: HTMLElement,
+		{ params, onClickOutside }: { onClickOutside?: () => void; params?: PopperParams } = {}
+	) {
 		popperContent = element;
 		popperParams = params;
 		initialisePopper();
+		function onClick(event: MouseEvent) {
+			const target = event.target as HTMLElement;
+			if (target === popperTrigger || popperTrigger?.contains(target)) {
+				return;
+			}
+			if (!element.contains(target)) {
+				onClickOutside?.();
+			}
+		}
+		if (onClickOutside) {
+			document.body.addEventListener('click', onClick, true);
+		}
 		return {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			update(newParams: Partial<OptionsGeneric<any>>) {
@@ -47,6 +75,9 @@ export default function createPopperAction() {
 				popper?.setOptions(newParams);
 			},
 			destroy() {
+				if (onClickOutside) {
+					document.body.removeEventListener('click', onClick, true);
+				}
 				popperContent = null;
 				destroyPopper();
 			}

@@ -1,8 +1,11 @@
-export function clickOutside(element: HTMLElement, callbackFunction: () => void) {
+export function clickOutside(
+	element: HTMLElement,
+	callbackFunction: (target: HTMLElement) => void
+) {
 	function onClick(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		if (!element.contains(target)) {
-			callbackFunction();
+			callbackFunction(target);
 		}
 	}
 
