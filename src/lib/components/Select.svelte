@@ -10,9 +10,8 @@
 	export let name: string | undefined = undefined;
 	export let items: { icon?: ComponentType; label: string; value: string }[];
 	export let className: string = '';
+	export let value: string = items[0]?.value ?? '';
 
-	let select: HTMLSelectElement;
-	let value: string = items[0]?.value ?? '';
 	let expanded = false;
 	$: selectedItem = items.find((i) => i.value === value);
 
@@ -131,13 +130,11 @@
 				use:focus={selected}
 				on:keydown={(e) => {
 					if (e.key === 'Enter') {
-						select.value = item.value;
 						value = item.value;
 						expanded = false;
 					}
 				}}
 				on:click={() => {
-					select.value = item.value;
 					value = item.value;
 					expanded = false;
 				}}
@@ -167,7 +164,7 @@
 	</ul>
 {/if}
 
-<select {id} {name} bind:this={select} bind:value hidden>
+<select {id} {name} bind:value hidden>
 	{#each items as item (item.value)}
 		<option value={item.value}>{item.label}</option>
 	{/each}
