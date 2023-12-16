@@ -2,17 +2,18 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	import { enhance } from '$app/forms';
-	import Input from '$lib/components/Input.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import CheckmarkIcon from '$lib/components/icons/Checkmark.svelte';
 	import PictureIcon from '$lib/components/icons/Picture.svelte';
 	import FileUploadTrigger from '$lib/components/FileUploadTrigger.svelte';
 	import PictureButton from '$lib/components/PictureButton.svelte';
 	import XButton from '$lib/components/XButton.svelte';
+	import ClickToUploadButton from '$lib/components/ClickToUploadButton.svelte';
+	import Input from '$lib/components/Input.svelte';
 
 	let answers: {
 		id: string;
-		text: string;
+		text?: string;
 		image?: File;
 	}[] = [
 		{
@@ -20,6 +21,19 @@
 			text: ''
 		}
 	];
+
+	$: console.log('answers', answers);
+	let pollType: string;
+	$: {
+		if (pollType) {
+			answers = [
+				{
+					id: Math.random().toString(16).slice(2),
+					text: ''
+				}
+			];
+		}
+	}
 
 	let pollImageFile: File | null = null;
 
@@ -45,6 +59,12 @@
 			await update();
 		};
 	};
+
+	function focus(el: HTMLInputElement, isfocused: boolean) {
+		if (isfocused) {
+			el.focus();
+		}
+	}
 </script>
 
 <h2 class="text-2xl font-bold text-surface-50 max-w-3xl mx-auto">Create a poll</h2>
@@ -104,6 +124,7 @@
 			id="type"
 			name="type"
 			className="w-full"
+			bind:value={pollType}
 			items={[
 				{
 					label: 'Multiple Choice',
@@ -129,38 +150,46 @@
 		class="px-3 py-2"
 	/>
 	<p class="font-medium mb-1 mt-3">Answers</p>
-	<div class="flex flex-col gap-3 mb-4">
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
 		{#each answers as answer, idx (answer.id)}
 			<div class="relative">
-				<input
-					name={`answers.${idx}`}
-					bind:value={answers[idx].text}
-					placeholder={`Option ${idx + 1}`}
-					class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
-					required
-				/>
-				{#if answers.length > 1}
-					<button
-						type="button"
-						class="absolute top-2 right-2 outline-none w-6 h-6 transition focus-visible:ring-1 focus-visible:ring-primary-700 enabled:hover:text-primary-700 flex flex-row justify-center items-center rounded-full"
-						aria-label="remove answer"
-						on:click={() => {
-							answers = answers.filter((a) => a.id !== answer.id);
-						}}
-					>
-						<svg
-							class="w-5 h-6"
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-						>
-							<path
-								fill="currentColor"
-								d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6z"
+				{#if pollType === 'text'}
+					<input
+						name={`answers.${idx}`}
+						bind:value={answers[idx].text}
+						placeholder={`Option ${idx + 1}`}
+						class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
+						required
+					/>
+					{#if answers.length > 1}
+						<XButton
+							class="absolute top-1 right-1"
+							aria-label="remove answer"
+							on:click={() => {
+								answers = answers.filter((a) => a.id !== answer.id);
+							}}
+						/>
+					{/if}
+				{:else if pollType === 'image'}
+					<div class="border border-surface-700 p-2 rounded relative flex flex-col gap-2">
+						{#if answers.length > 1}
+							<XButton
+								class="absolute top-2 right-2"
+								aria-label="remove answer"
+								on:click={() => {
+									answers = answers.filter((a) => a.id !== answer.id);
+								}}
 							/>
-						</svg>
-					</button>
+						{/if}
+						<ClickToUploadButton bind:file={answer.image} />
+						<input
+							use:focus={idx === answers.length - 1}
+							bind:value={answers[idx].text}
+							name={`answers.text.${idx}`}
+							placeholder={`Label ${idx + 1}  (optional)`}
+							class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
+						/>
+					</div>
 				{/if}
 			</div>
 		{/each}
