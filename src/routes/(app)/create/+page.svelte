@@ -11,21 +11,21 @@
 	import type { ActionData } from './$types';
 	import { invalidateAll } from '$app/navigation';
 	import { focus } from '$lib/utils';
+	import toast from 'svelte-french-toast';
 
 	export let form: ActionData;
 	$: console.log('form', form);
 	let error = '';
-
 	let answers: {
 		id: string;
-		text?: string;
+		label?: string;
 		image?: string;
 		error?: string;
 		focus?: boolean;
 	}[] = [
 		{
 			id: Math.random().toString(16).slice(2),
-			text: ''
+			label: ''
 		}
 	];
 
@@ -48,7 +48,7 @@
 			answers = [
 				{
 					id: Math.random().toString(16).slice(2),
-					text: ''
+					label: ''
 				}
 			];
 		}
@@ -86,21 +86,14 @@
 
 		// poll image
 		if (pollImage) {
-			formdata.append('pollImage', pollImage);
+			formdata.append('image', pollImage);
 		}
-
 		// answers
 		formdata.append('answers', JSON.stringify(answers));
-		for (let i = 0; i < answers.length; i++) {
-			const answer = answers[i];
-			if (answer.image) {
-				formdata.append(`answer.${i}.image`, answer.image);
-			}
-		}
-
 		console.log('formdata', formdata);
 
-		const response = await fetch(e.currentTarget.action, {
+		const form = e.currentTarget;
+		const response = await fetch(form.action, {
 			method: 'POST',
 			body: formdata
 		});
@@ -108,8 +101,16 @@
 		const result = deserialize(await response.text());
 		console.log('result', result);
 		if (result.type === 'success') {
+			answers = [];
+			pollImage = undefined;
+			form.reset();
 			// rerun all `load` functions, following the successful update
+			toast.success('Poll created');
 			await invalidateAll();
+		} else if (result.type === 'failure') {
+			if (result?.data?.error) {
+				toast.error(result.data?.error as string);
+			}
 		}
 
 		applyAction(result);
@@ -185,7 +186,7 @@
 				{#if pollType === 'text'}
 					<input
 						name={`answers.${idx}`}
-						bind:value={answers[idx].text}
+						bind:value={answers[idx].label}
 						placeholder={`Option ${idx + 1}`}
 						class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
 						required
@@ -217,7 +218,7 @@
 						/>
 						<input
 							use:focus={idx === answers.length - 1}
-							bind:value={answers[idx].text}
+							bind:value={answers[idx].label}
 							name={`answers.text.${idx}`}
 							placeholder={`Label ${idx + 1}  (optional)`}
 							class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
@@ -231,7 +232,7 @@
 		type="button"
 		class="max-w-max px-3 py-2 rounded-sm font-medium text-surface-50 bg-surface-700 outline-none transition focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-surface-600"
 		on:click={() => {
-			answers.push({ text: '', id: Math.random().toString(16).slice(2) });
+			answers.push({ label: '', id: Math.random().toString(16).slice(2) });
 			answers = answers;
 		}}
 	>
