@@ -19,7 +19,7 @@
 	let answers: {
 		id: string;
 		text?: string;
-		image?: File;
+		image?: string;
 		error?: string;
 		focus?: boolean;
 	}[] = [
@@ -54,7 +54,7 @@
 		}
 	}
 
-	let pollImageFile: File | null = null;
+	let pollImage: string | undefined = undefined;
 
 	// use submit event
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
@@ -85,8 +85,8 @@
 		}
 
 		// poll image
-		if (pollImageFile) {
-			formdata.append('pollImage', pollImageFile);
+		if (pollImage) {
+			formdata.append('pollImage', pollImage);
 		}
 
 		// answers
@@ -137,25 +137,21 @@
 			<FileUploadTrigger
 				trigger={PictureButton}
 				on:upload={(e) => {
-					pollImageFile = e.detail;
+					pollImage = e.detail;
 				}}
 			/>
 		</div>
 	</div>
-	{#if pollImageFile}
+	{#if pollImage}
 		<div class="relative mt-4 mb-2">
 			<XButton
 				class="absolute top-0 right-0"
 				aria-label="remove poll image"
 				on:click={() => {
-					pollImageFile = null;
+					pollImage = undefined;
 				}}
 			/>
-			<img
-				alt="pollImageFile"
-				class="max-h-[300px] w-auto mx-auto"
-				src={URL.createObjectURL(pollImageFile)}
-			/>
+			<img alt="poll" class="max-h-[300px] w-auto mx-auto" src={pollImage} />
 		</div>
 	{/if}
 	<label for="description" class="font-medium mt-5 mb-1"
@@ -215,7 +211,7 @@
 							/>
 						{/if}
 						<ClickToUploadButton
-							bind:file={answer.image}
+							bind:image={answer.image}
 							error={answer.error}
 							bind:focus={answer.focus}
 						/>

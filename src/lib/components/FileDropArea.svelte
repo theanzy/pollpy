@@ -1,14 +1,29 @@
 <script lang="ts">
 	import { dropfiles } from '$lib/dropfiles';
 	import { cn } from '$lib/utils';
+	import { createEventDispatcher } from 'svelte';
 	import toast from 'svelte-french-toast';
+
+	export let disabled = false;
 	let dragging = false;
-	export let files: File[] | null = null;
+	let files: File[] | null = null;
 	let acceptFileTypes = ['image/png', 'image/jpeg', 'image/gif'];
 	const fileSizeMB = 4;
 	const fileSizeLimit = fileSizeMB * (1024 * 1024);
 
+	const dispatch = createEventDispatcher<{
+		upload: File;
+	}>();
+	$: {
+		if (files?.[0]) {
+			dispatch('upload', files[0]);
+		}
+	}
+
 	function handleDropFiles(droppedFiles: File[] | null, err?: Error) {
+		if (disabled) {
+			return;
+		}
 		if (err) {
 			toast.error(err.message);
 		} else {
@@ -22,6 +37,9 @@
 			currentTarget: EventTarget & HTMLInputElement;
 		}
 	) {
+		if (disabled) {
+			return;
+		}
 		const target = e.target as HTMLInputElement;
 		if (!target.files) {
 			return;
@@ -44,8 +62,10 @@
 
 <div
 	class={cn(
-		'relative border border-surface-700 hover:text-primary-700 hover:bg-surface-800 text-center select-none block transition',
-		dragging && 'bg-surface-800 text-primary-700 group z-0'
+		'relative border border-surface-700 text-center select-none block transition',
+		dragging && 'bg-surface-800 text-primary-700 group z-0',
+		!disabled && 'hover:text-primary-700 hover:bg-surface-800',
+		disabled && 'opacity-50 cursor-not-allowed'
 	)}
 	use:dropfiles={{
 		onDragEnter() {
@@ -63,10 +83,11 @@
 	}}
 >
 	<input
+		{disabled}
 		on:change={handleUploadFile}
 		type="file"
 		accept={acceptFileTypes.join(',')}
-		class="inset-0 z-0 absolute opacity-0 ring-1 cursor-pointer peer"
+		class="inset-0 z-0 absolute opacity-0 ring-1 peer enabled:cursor-pointer"
 	/>
 	<div
 		class={'w-full py-12 px-2 peer-focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-700 rounded'}

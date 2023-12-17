@@ -6,7 +6,7 @@
 	let open = false;
 	let mounted = false;
 	let button: HTMLButtonElement;
-	export let file: File | undefined = undefined;
+	export let image: string | undefined = undefined;
 	export let error: string | undefined = undefined;
 	export let focus: boolean | undefined = undefined;
 
@@ -23,7 +23,10 @@
 <FileUploadModal
 	bind:open
 	on:upload={(e) => {
-		file = e.detail;
+		const url = new URL(e.detail);
+		if (url.protocol === 'https:') {
+			image = e.detail;
+		}
 	}}
 />
 
@@ -37,8 +40,8 @@
 		open = true;
 	}}
 >
-	{#if file}
-		<img class="max-h-full w-auto mx-auto" alt="answer" src={URL.createObjectURL(file)} />
+	{#if image}
+		<img class="max-h-full w-auto mx-auto" alt="answer" src={image} />
 	{:else}
 		<div class="w-full h-full flex flex-col justify-center items-center gap-1 py-10 px-10">
 			<PictureIcon class="w-8 h-8" />

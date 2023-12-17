@@ -1,22 +1,45 @@
 <script lang="ts">
-	import { clickOutside } from '$lib/clickoutside';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import FileDropArea from './FileDropArea.svelte';
+	import { createEventDispatcher } from 'svelte';
+	import toast from 'svelte-french-toast';
 
+	import { clickOutside } from '$lib/clickoutside';
+	import FileDropArea from './FileDropArea.svelte';
 	import Modal from './Modal.svelte';
 
+	export let open = false;
+	let loading = false;
+
 	const dispatch = createEventDispatcher<{
-		upload: File;
+		upload: string;
 	}>();
 
-	export let open = false;
-	let files: File[] | null = null;
-	$: {
-		const file = files?.[0];
-		if (file) {
-			dispatch('upload', file);
+	async function handleUpload(e: CustomEvent<File>) {
+		if (loading) {
+			return;
+		}
+		loading = true;
+		try {
+			const formdata = new FormData();
+			formdata.append('file', e.detail);
+			const res = await fetch('/upload/image', {
+				body: formdata,
+				method: 'POST'
+			});
+			const data: {
+				error?: string;
+				url?: string;
+			} = await res.json();
+			if (data.error) {
+				toast.error(data.error);
+			} else if (data.url) {
+				dispatch('upload', data.url);
+			}
 			open = false;
-			files = null;
+		} catch (error) {
+			console.log('error upload file /upload/image', error);
+			toast.error('Fail to upload image');
+		} finally {
+			loading = false;
 		}
 	}
 </script>
@@ -31,12 +54,13 @@
 		<h3 class="mt-3 mx-6 text-lg text-surface-50 font-medium">Upload File</h3>
 		<hr class="border border-transparent border-b-surface-700 my-4" />
 		<div class="px-6 mb-5">
-			<FileDropArea bind:files />
+			<FileDropArea on:upload={handleUpload} disabled={loading} />
 			<button
+				disabled={loading}
 				on:click={() => {
 					open = false;
 				}}
-				class="mt-5 px-10 py-2 font-medium outline-none rounded-sm bg-secondary-600 text-surface-100 transition hover:bg-secondary-700 hover:text-surface-50 focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-600"
+				class="mt-5 px-10 py-2 font-medium outline-none rounded-sm bg-secondary-600 text-surface-100 transition enabled:hover:bg-secondary-700 enabled:hover:text-surface-50 enabled:focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-600 disabled:opacity-50"
 			>
 				Cancel
 			</button>
