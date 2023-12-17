@@ -4,3 +4,9 @@ import { twMerge } from 'tailwind-merge';
 export const cn = (...inputs: ClassValue[]) => {
 	return twMerge(clsx(inputs));
 };
+
+export function focus(el: HTMLInputElement, isfocused: boolean) {
+	if (isfocused) {
+		el.focus();
+	}
+}

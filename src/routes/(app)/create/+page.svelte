@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { SubmitFunction } from '@sveltejs/kit';
-
-	import { enhance } from '$app/forms';
+	import { applyAction, deserialize } from '$app/forms';
 	import Select from '$lib/components/Select.svelte';
 	import CheckmarkIcon from '$lib/components/icons/Checkmark.svelte';
 	import PictureIcon from '$lib/components/icons/Picture.svelte';
@@ -10,11 +8,20 @@
 	import XButton from '$lib/components/XButton.svelte';
 	import ClickToUploadButton from '$lib/components/ClickToUploadButton.svelte';
 	import Input from '$lib/components/Input.svelte';
+	import type { ActionData } from './$types';
+	import { invalidateAll } from '$app/navigation';
+	import { focus } from '$lib/utils';
+
+	export let form: ActionData;
+	$: console.log('form', form);
+	let error = '';
 
 	let answers: {
 		id: string;
 		text?: string;
 		image?: File;
+		error?: string;
+		focus?: boolean;
 	}[] = [
 		{
 			id: Math.random().toString(16).slice(2),
@@ -22,8 +29,20 @@
 		}
 	];
 
-	$: console.log('answers', answers);
-	let pollType: string;
+	const pollTypes = [
+		{
+			label: 'Multiple Choice',
+			value: 'text',
+			icon: CheckmarkIcon
+		},
+		{
+			label: 'Image',
+			value: 'image',
+			icon: PictureIcon
+		}
+	] as const;
+	let pollType: (typeof pollTypes)[number]['value'];
+
 	$: {
 		if (pollType) {
 			answers = [
@@ -38,39 +57,69 @@
 	let pollImageFile: File | null = null;
 
 	// use submit event
-	const handleSubmit: SubmitFunction = async ({
-		formElement,
-		formData,
-		action,
-		cancel,
-		submitter
-	}) => {
-		console.log('formData', Object.fromEntries(formData));
-		cancel();
-		// `formElement` is this `<form>` element
-		// `formData` is its `FormData` object that's about to be submitted
-		// `action` is the URL to which the form is posted
-		// calling `cancel()` will prevent the submission
-		// `submitter` is the `HTMLElement` that caused the form to be submitted
+	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
+		e.preventDefault();
+		const formdata = new FormData(e.currentTarget);
+		console.log('event.currentTarget.action', e.currentTarget.action);
 
-		return async ({ result, update }) => {
-			// `result` is an `ActionResult` object
-			// `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
-			await update();
-		};
-	};
-
-	function focus(el: HTMLInputElement, isfocused: boolean) {
-		if (isfocused) {
-			el.focus();
+		// validation
+		if (pollType === 'image') {
+			let newAnswers = answers;
+			let hasFocused = false;
+			for (let i = 0; i < newAnswers.length; i++) {
+				const element = newAnswers[i];
+				if (!element.image) {
+					element.error = 'Image is required.';
+					if (!hasFocused) {
+						element.focus = true;
+					}
+					hasFocused = true;
+				} else {
+					element.error = undefined;
+				}
+			}
+			answers = newAnswers;
+			if (hasFocused) {
+				return;
+			}
 		}
+
+		// poll image
+		if (pollImageFile) {
+			formdata.append('pollImage', pollImageFile);
+		}
+
+		// answers
+		formdata.append('answers', JSON.stringify(answers));
+		for (let i = 0; i < answers.length; i++) {
+			const answer = answers[i];
+			if (answer.image) {
+				formdata.append(`answer.${i}.image`, answer.image);
+			}
+		}
+
+		console.log('formdata', formdata);
+
+		const response = await fetch(e.currentTarget.action, {
+			method: 'POST',
+			body: formdata
+		});
+
+		const result = deserialize(await response.text());
+		console.log('result', result);
+		if (result.type === 'success') {
+			// rerun all `load` functions, following the successful update
+			await invalidateAll();
+		}
+
+		applyAction(result);
 	}
 </script>
 
 <h2 class="text-2xl font-bold text-surface-50 max-w-3xl mx-auto">Create a poll</h2>
 <p class="text-surface-300 mt-1 mb-5 max-w-3xl mx-auto">Fill up the fields below</p>
 <form
-	use:enhance={handleSubmit}
+	on:submit={handleSubmit}
 	method="POST"
 	action=""
 	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
@@ -120,24 +169,7 @@
 	<hr class="my-6 border-b border-surface-700" />
 	<div class="mb-3 w-[50%]">
 		<label for="type" class="font-medium mb-1">Poll type</label>
-		<Select
-			id="type"
-			name="type"
-			className="w-full"
-			bind:value={pollType}
-			items={[
-				{
-					label: 'Multiple Choice',
-					value: 'text',
-					icon: CheckmarkIcon
-				},
-				{
-					label: 'Image',
-					value: 'image',
-					icon: PictureIcon
-				}
-			]}
-		/>
+		<Select id="type" name="type" className="w-full" bind:value={pollType} items={[...pollTypes]} />
 	</div>
 	<label for="maxChoice" class="font-medium mb-1">Maximum Choices</label>
 	<Input
@@ -148,6 +180,7 @@
 		name="maxChoice"
 		placeholder="1"
 		class="px-3 py-2"
+		required
 	/>
 	<p class="font-medium mb-1 mt-3">Answers</p>
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -181,7 +214,11 @@
 								}}
 							/>
 						{/if}
-						<ClickToUploadButton bind:file={answer.image} />
+						<ClickToUploadButton
+							bind:file={answer.image}
+							error={answer.error}
+							bind:focus={answer.focus}
+						/>
 						<input
 							use:focus={idx === answers.length - 1}
 							bind:value={answers[idx].text}
