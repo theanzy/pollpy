@@ -22,6 +22,13 @@
       "when": 1702891655229,
       "tag": "0002_pale_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1702912886440,
+      "tag": "0003_smart_penance",
+      "breakpoints": true
     }
   ]
 }

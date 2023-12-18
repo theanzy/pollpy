@@ -1,4 +1,4 @@
-import { date, integer, text, uuid, varchar } from 'drizzle-orm/pg-core';
+import { timestamp, integer, text, uuid, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -21,8 +21,8 @@ export const polls = mySchema.table('polls', {
 		length: 256
 	}).notNull(),
 	createdBy: text('created_by').notNull(),
-	createdAt: date('created_at').notNull().defaultNow(),
-	closedAt: date('closed_at')
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	closedAt: timestamp('closed_at')
 });
 
 export const insertPollSchema = createInsertSchema(polls, {
@@ -39,7 +39,7 @@ export const insertPollSchema = createInsertSchema(polls, {
 	identifyVoteBy: (schema) =>
 		schema.identifyVoteBy.min(1, 'maxChoice is too low. minimum is 1').optional(),
 	createdBy: (schema) => schema.createdBy.optional(),
-	createdAt: (schema) => schema.createdAt.datetime('created At is not a valid date').optional()
+	createdAt: (schema) => schema.createdAt.optional()
 });
 
 export const answers = mySchema.table('answers', {
