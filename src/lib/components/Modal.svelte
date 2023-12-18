@@ -1,15 +1,22 @@
-<script>
+<script lang="ts">
 	import { fadeFly } from '$lib/transitions';
 	import { trapFocus } from '$lib/trapfocus';
+	import { createEventDispatcher } from 'svelte';
 	import XButton from './XButton.svelte';
 	export let open = false;
 	export let closeButton = false;
+
+	const dispatch = createEventDispatcher<{ close: void }>();
+	const handleClose = () => {
+		dispatch('close');
+		open = false;
+	};
 </script>
 
 <svelte:body
 	on:keydown={(e) => {
 		if (e.key === 'Escape') {
-			open = false;
+			handleClose();
 		}
 	}}
 />
@@ -26,9 +33,7 @@
 				<XButton
 					aria-label="close modal"
 					class="absolute top-2 right-2 z-10"
-					on:click={() => {
-						open = false;
-					}}
+					on:click={handleClose}
 				/>
 			{/if}
 
