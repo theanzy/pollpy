@@ -18,13 +18,13 @@
 				{:else}
 					<a
 						href="/signup"
-						class="hidden lg:block px-4 py-2 font-medium outline-none transition hover:text-secondary-300 text-secondary-500 focus-visible:text-secondary-300"
+						class="hidden lg:block px-4 py-2 font-medium outline-none transition hover:text-primary-500 text-primary-600 focus-visible:text-primary-500"
 					>
 						Sign up
 					</a>
 					<a
 						href="/login"
-						class="hidden lg:block border border-surface-600 bg-surface-950 px-4 py-2 rounded-sm font-medium outline-none transition hover:bg-surface-800 hover:text-white focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700"
+						class="hidden lg:block px-4 py-2 rounded font-medium outline-none transition hover:text-white focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700"
 					>
 						Log in
 					</a>
