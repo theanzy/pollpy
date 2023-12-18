@@ -3,7 +3,7 @@ import { answers, insertPollRequest, polls } from '$lib/server/schema/poll';
 import { fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	default: async ({ locals, request }) => {
+	default: async ({ locals, request, cookies }) => {
 		const session = await locals.auth.validate();
 		console.log('create poll... session', session);
 		// if no session use browser session
@@ -27,7 +27,7 @@ export const actions: Actions = {
 				error: errors
 			});
 		}
-
+		const creatorId = session?.user?.userId ?? (cookies.get('pollpy_guess_session') as string);
 		try {
 			const res = await db.transaction(async (tx) => {
 				const poll = await tx
@@ -37,7 +37,8 @@ export const actions: Actions = {
 						maxChoice: parsed.data.maxChoice,
 						type: parsed.data.type,
 						identifyVoteBy: 'cookie session',
-						image: parsed.data.image
+						image: parsed.data.image,
+						createdBy: creatorId
 					})
 					.returning({
 						id: polls.id

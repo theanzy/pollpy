@@ -8,14 +8,12 @@
 	import XButton from '$lib/components/XButton.svelte';
 	import ClickToUploadButton from '$lib/components/ClickToUploadButton.svelte';
 	import Input from '$lib/components/Input.svelte';
-	import type { ActionData } from './$types';
 	import { invalidateAll } from '$app/navigation';
 	import { focus } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
-	export let form: ActionData;
-	$: console.log('form', form);
-	let error = '';
+	let loading = false;
+
 	let answers: {
 		id: string;
 		label?: string;
@@ -93,27 +91,32 @@
 		console.log('formdata', formdata);
 
 		const form = e.currentTarget;
-		const response = await fetch(form.action, {
-			method: 'POST',
-			body: formdata
-		});
-
-		const result = deserialize(await response.text());
-		console.log('result', result);
-		if (result.type === 'success') {
-			answers = [];
-			pollImage = undefined;
-			form.reset();
-			// rerun all `load` functions, following the successful update
-			toast.success('Poll created');
-			await invalidateAll();
-		} else if (result.type === 'failure') {
-			if (result?.data?.error) {
-				toast.error(result.data?.error as string);
+		try {
+			loading = true;
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formdata
+			});
+			const result = deserialize(await response.text());
+			if (result.type === 'success') {
+				answers = [];
+				pollImage = undefined;
+				form.reset();
+				// rerun all `load` functions, following the successful update
+				toast.success('Poll created');
+				await invalidateAll();
+			} else if (result.type === 'failure') {
+				if (result?.data?.error) {
+					toast.error(result.data?.error as string);
+				}
 			}
+			applyAction(result);
+		} catch (error) {
+			console.log('error create poll', error);
+			toast.error('Something went wrong');
+		} finally {
+			loading = false;
 		}
-
-		applyAction(result);
 	}
 </script>
 
@@ -240,8 +243,9 @@
 	</button>
 	<hr class="my-6 border-transparent" />
 	<button
+		disabled={loading}
 		type="submit"
-		class="max-w-max px-6 py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
+		class="max-w-max px-6 py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
 	>
 		Create poll
 	</button>

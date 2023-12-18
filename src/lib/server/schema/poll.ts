@@ -1,4 +1,4 @@
-import { integer, text, uuid, varchar } from 'drizzle-orm/pg-core';
+import { date, integer, text, uuid, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -19,7 +19,10 @@ export const polls = mySchema.table('polls', {
 	maxChoice: integer('max_choices').notNull(),
 	identifyVoteBy: varchar('identify_vote_by', {
 		length: 256
-	}).notNull()
+	}).notNull(),
+	createdBy: text('created_by').notNull(),
+	createdAt: date('created_at').notNull().defaultNow(),
+	closedAt: date('closed_at')
 });
 
 export const insertPollSchema = createInsertSchema(polls, {
@@ -34,7 +37,9 @@ export const insertPollSchema = createInsertSchema(polls, {
 	type: (schema) => schema.type.min(1, 'type is required').max(256, 'type is too long'),
 	maxChoice: (schema) => schema.maxChoice.min(1, 'maxChoice is too low. minimum is 1'),
 	identifyVoteBy: (schema) =>
-		schema.identifyVoteBy.min(1, 'maxChoice is too low. minimum is 1').optional()
+		schema.identifyVoteBy.min(1, 'maxChoice is too low. minimum is 1').optional(),
+	createdBy: (schema) => schema.createdBy.optional(),
+	createdAt: (schema) => schema.createdAt.datetime('created At is not a valid date').optional()
 });
 
 export const answers = mySchema.table('answers', {
@@ -52,8 +57,7 @@ export const answers = mySchema.table('answers', {
 
 const insertImageAnswerSchema = createInsertSchema(answers, {
 	pollId: (schema) => schema.pollId.optional(),
-	label: (schema) =>
-		schema.label.min(1, 'label is too short').max(256, 'label is too long').optional(),
+	label: (schema) => schema.label.max(256, 'label is too long').optional(),
 	image: (schema) =>
 		schema.image
 			.url('image url is invalid')
