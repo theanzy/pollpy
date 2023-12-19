@@ -77,90 +77,98 @@ export const actions = {
 			});
 		}
 
-		const existingPolls = await db
-			.select({
-				id: polls.id,
-				identifyVoteBy: polls.identifyVoteBy,
-				maxChoice: polls.maxChoice
-			})
-			.from(polls)
-			.innerJoin(answers, eq(answers.pollId, polls.id))
-			.where(() => eq(polls.id, pollId));
+		try {
+			const existingPolls = await db
+				.select({
+					id: polls.id,
+					identifyVoteBy: polls.identifyVoteBy,
+					maxChoice: polls.maxChoice
+				})
+				.from(polls)
+				.innerJoin(answers, eq(answers.pollId, polls.id))
+				.where(() => eq(polls.id, pollId));
 
-		if (!existingPolls[0]) {
-			return fail(400, {
-				status: 'invalid',
-				error: 'Invalid vote'
+			if (!existingPolls[0]) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'Invalid vote'
+				});
+			}
+			const poll = existingPolls[0];
+
+			let voterKey: string = '';
+			const identifyVoteBy = poll.identifyVoteBy;
+			if (identifyVoteBy === 'ip') {
+				const ip = getClientAddress();
+				const ipHashed = await sha256(ip);
+				voterKey = ipHashed;
+			} else if (identifyVoteBy === 'cookie session') {
+				voterKey = guestSessionId ?? '';
+			} else if (identifyVoteBy === 'free user') {
+				voterKey = session?.user.userId ?? '';
+			}
+
+			if (!voterKey?.length) {
+				console.log('error: invalid voterId');
+				return fail(400, {
+					status: 'invalid',
+					error: 'Invalid vote'
+				});
+			}
+
+			const existingVotes = await db
+				.select({ id: votes.id })
+				.from(votes)
+				.where(() => and(eq(votes.pollId, poll.id), eq(votes.voterKey, voterKey)));
+			if (existingVotes.length) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'You have already voted on this poll'
+				});
+			}
+
+			// find valid poll answers
+			const pollAnswers = await db
+				.select({
+					answerId: answers.id
+				})
+				.from(polls)
+				.innerJoin(answers, eq(answers.pollId, polls.id))
+				.where(() => and(eq(polls.id, poll.id), inArray(answers.id, answerIds)));
+
+			if (pollAnswers.length === 0) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'Please choose at least one valid vote'
+				});
+			}
+
+			if (pollAnswers.length > poll.maxChoice) {
+				return fail(400, {
+					status: 'invalid',
+					error: `Votes cannot be more than ${poll.maxChoice}`
+				});
+			}
+
+			// insert votes
+			await db.insert(votes).values(
+				pollAnswers.map((answer) => ({
+					pollId: poll.id,
+					answerId: answer.answerId,
+					voterKey: voterKey
+				}))
+			);
+
+			console.log('poll', pollAnswers);
+			return {
+				status: 'success'
+			};
+		} catch (error) {
+			console.log('vote poll error', error);
+			return fail(500, {
+				status: 'failure',
+				error: 'Something went wrong'
 			});
 		}
-		const poll = existingPolls[0];
-
-		let voterKey: string = '';
-		const identifyVoteBy = poll.identifyVoteBy;
-		if (identifyVoteBy === 'ip') {
-			const ip = getClientAddress();
-			const ipHashed = await sha256(ip);
-			voterKey = ipHashed;
-		} else if (identifyVoteBy === 'cookie session') {
-			voterKey = guestSessionId ?? '';
-		} else if (identifyVoteBy === 'free user') {
-			voterKey = session?.user.userId ?? '';
-		}
-
-		if (!voterKey?.length) {
-			console.log('error: invalid voterId');
-			return fail(400, {
-				status: 'invalid',
-				error: 'Invalid vote'
-			});
-		}
-
-		const existingVotes = await db
-			.select({ id: votes.id })
-			.from(votes)
-			.where(() => and(eq(votes.pollId, poll.id), eq(votes.voterKey, voterKey)));
-		if (existingVotes.length) {
-			return fail(400, {
-				status: 'invalid',
-				error: 'You have already voted on this poll'
-			});
-		}
-
-		// find valid poll answers
-		const pollAnswers = await db
-			.select({
-				answerId: answers.id
-			})
-			.from(polls)
-			.innerJoin(answers, eq(answers.pollId, polls.id))
-			.where(() => and(eq(polls.id, poll.id), inArray(answers.id, answerIds)));
-
-		if (pollAnswers.length === 0) {
-			return fail(400, {
-				status: 'invalid',
-				error: 'Please choose at least one valid vote'
-			});
-		}
-
-		if (pollAnswers.length > poll.maxChoice) {
-			return fail(400, {
-				status: 'invalid',
-				error: `Votes cannot be more than ${poll.maxChoice}`
-			});
-		}
-
-		// insert votes
-		await db.insert(votes).values(
-			pollAnswers.map((answer) => ({
-				pollId: poll.id,
-				answerId: answer.answerId,
-				voterKey: voterKey
-			}))
-		);
-
-		console.log('poll', pollAnswers);
-		return {
-			status: 'success'
-		};
 	}
 };
