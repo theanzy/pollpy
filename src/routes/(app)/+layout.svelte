@@ -10,7 +10,7 @@
 	<nav>
 		<div class="max-w-5xl mx-auto py-5 px-5 flex flex-row gap-3 items-center">
 			<a href="/" class="font-bold text-xl text-white mr-auto">pollpy</a>
-			<CreatePollLink class="text-lg" />
+			<CreatePollLink class="text-md md:text-lg" />
 			<div class="ml-auto flex flex-row gap-3 items-center">
 				<Menu user={data.user} />
 				{#if data.user}

@@ -9,12 +9,12 @@
 <a
 	href="/create"
 	class={cn(
-		'outline-none transition focus-visible:text-primary-700 px-3 font-medium flex flex-row gap-2 items-center hover:text-primary-700',
+		'outline-none transition focus-visible:text-primary-700 px-3 font-medium flex flex-row gap-1 md:gap-2 items-center hover:text-primary-700',
 		$$restProps.class
 	)}
 >
 	<svg
-		class="h-5 w-5"
+		class="h-4 w-4 md:h-5 md:w-5"
 		xmlns="http://www.w3.org/2000/svg"
 		width="20"
 		height="20"
