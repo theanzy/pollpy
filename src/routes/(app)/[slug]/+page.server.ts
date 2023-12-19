@@ -122,7 +122,7 @@ export const actions = {
 		if (existingVotes.length) {
 			return fail(400, {
 				status: 'invalid',
-				error: 'You have already voted'
+				error: 'You have already voted on this poll'
 			});
 		}
 
