@@ -15,6 +15,7 @@ export async function load({ params }) {
 				createdBy: polls.createdBy,
 				creatorName: users.username,
 				createdAt: polls.createdAt,
+				maxChoice: polls.maxChoice,
 				identifyVoteBy: polls.identifyVoteBy,
 				answer: answers
 			})
