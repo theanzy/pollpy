@@ -18,6 +18,6 @@ export const actions: Actions = {
 		}
 		await auth.invalidateSession(session.sessionId);
 		locals.auth.setSession(null); // remove cookie
-		throw redirect(302, '/login');
+		throw redirect(302, '/');
 	}
 };
