@@ -33,6 +33,37 @@
 					</div>
 				{/each}
 			</fieldset>
+		{:else if poll.type === 'image'}
+			<fieldset
+				class="grid grid-cols-1 lg:grid-cols-2 divide-y md:divide-x divide-surface-700 border border-surface-700"
+			>
+				{#each poll.answers as answer (answer.id)}
+					<div class="flex items-center gap-1 px-4 py-2 group overflow-hidden">
+						<input
+							class="relative float-left h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:content-[''] after:absolute after:z-[1] after:block after:h-5 after:w-4 after:rounded-full after:content-[''] checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] checked:focus:before:scale-100 dark:border-neutral-600 checked:border-primary-500 checked:after:border-primary-500 checked:after:bg-primary-500 checked:focus:border-primary-500"
+							id={answer.id}
+							name={poll.maxChoice > 1 ? `answer.${answer.id}` : 'answer'}
+							type={poll.maxChoice > 1 ? 'checkbox' : 'radio'}
+							value={answer.id}
+						/>
+						<label
+							for={answer.id}
+							class="w-full cursor-pointer rounded flex flex-col gap-1 justify-center items-center transition ring-offset-2 ring-offset-surface-950 ring-primary-700 peer-checked:ring-2 peer-focus:scale-105"
+						>
+							<div class="h-[200px]">
+								<img
+									src={answer.image}
+									alt={answer.label}
+									class="max-h-full max-w-auto h-auto w-auto transition group-hover:scale-105"
+								/>
+							</div>
+							{#if answer.label}
+								<p class="self-start mt-1 pl-5 text-surface-300 font-medium">{answer.label}</p>
+							{/if}
+						</label>
+					</div>
+				{/each}
+			</fieldset>
 		{/if}
 		<hr class="my-3 border border-transparent" />
 		<div class="flex flex-row">
