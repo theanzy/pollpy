@@ -171,7 +171,7 @@
 		class="rounded-sm bg-surface-700 text-surface-100 px-2 py-1 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400"
 	/>
 	<hr class="my-6 border-b border-surface-700" />
-	<div class="mb-3 w-[50%]">
+	<div class="mb-3 w-full md:w-[50%]">
 		<label for="type" class="font-medium mb-1">Poll type</label>
 		<Select id="type" name="type" className="w-full" bind:value={pollType} items={[...pollTypes]} />
 	</div>
