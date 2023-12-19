@@ -1,5 +1,6 @@
 import { db } from '$lib/server/drizzle';
 import { answers, insertPollRequest, polls } from '$lib/server/schema/poll';
+import { uuidToBase64 } from '$lib/server/utils';
 import { fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
@@ -71,7 +72,8 @@ export const actions: Actions = {
 				}
 
 				return {
-					status: 'success'
+					status: 'success',
+					pollId: poll[0]?.id
 				};
 			});
 			if (res.status === 'fail') {
@@ -83,6 +85,7 @@ export const actions: Actions = {
 
 			return {
 				status: 'success',
+				slug: uuidToBase64(res.pollId as string),
 				error: null
 			};
 		} catch (error) {

@@ -8,7 +8,7 @@
 	import XButton from '$lib/components/XButton.svelte';
 	import ClickToUploadButton from '$lib/components/ClickToUploadButton.svelte';
 	import Input from '$lib/components/Input.svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { focus } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
@@ -105,6 +105,10 @@
 				// rerun all `load` functions, following the successful update
 				toast.success('Poll created');
 				await invalidateAll();
+				if (result.data?.slug) {
+					console.log('pollid', result.data.slug);
+					goto(`/${result.data.slug as string}`);
+				}
 			} else if (result.type === 'failure') {
 				if (result?.data?.error) {
 					toast.error(result.data?.error as string);
