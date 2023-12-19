@@ -77,7 +77,7 @@
 							>
 								{user.username}
 							</p>
-							<p class="text-sm text-surface-300">poolpy user</p>
+							<p class="text-sm text-surface-300">pollpy user</p>
 						</div>
 					{/if}
 					<hr class="border border-transparent my-1" />

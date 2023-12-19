@@ -5,7 +5,7 @@
 
 <svelte:head>
 	<title>pollpy</title>
-	<meta name="description" content="straw pools" />
+	<meta name="description" content="straw polls" />
 	<meta name="robots" content="noindex nofollow" />
 </svelte:head>
 <Toaster
