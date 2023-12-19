@@ -1,14 +1,76 @@
-<script>
+<script lang="ts">
+	import { applyAction, deserialize } from '$app/forms';
 	import { dateMoment } from '$lib/utils';
+	import toast from 'svelte-french-toast';
 
 	// your script goes here
 	export let data;
-	$: poll = data.poll;
+	export let loading = false;
+	$: ({ poll } = data);
+
+	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
+		e.preventDefault();
+		if (!poll?.id) {
+			return;
+		}
+		const formdata = new FormData(e.currentTarget);
+		const answers: string[] = [];
+		for (const v of formdata.values()) {
+			if (typeof v === 'string') {
+				answers.push(v);
+			}
+		}
+
+		// validation
+		if (answers.length < 1) {
+			toast.error('Must have at least one vote');
+			return;
+		} else if (answers.length > poll.maxChoice) {
+			toast.error(`Vote choices must not be more than ${poll.maxChoice}`);
+			return;
+		}
+
+		const formToSubmit = new FormData();
+		formToSubmit.append('answers', JSON.stringify(answers));
+		formToSubmit.append('pollId', poll.id);
+
+		const form = e.currentTarget;
+		try {
+			loading = true;
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formToSubmit
+			});
+			const result = deserialize(await response.text());
+			if (result.type === 'failure') {
+				if (!!result.data && 'error' in result.data) {
+					throw new Error(result.data.error as string);
+				}
+			}
+			if (result.type === 'success') {
+				form.reset();
+				toast.success('Your votes are added.');
+			}
+			await applyAction(result);
+			console.log('response', result);
+		} catch (error) {
+			console.log('vote error', error);
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error('Fail to vote');
+			}
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 {#if poll}
 	<form
+		on:submit={handleSubmit}
 		method="post"
+		action="?/vote"
 		class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
 	>
 		<h2 class="text-xl font-semibold text-surface-50">{poll.title}</h2>
@@ -68,23 +130,39 @@
 		<hr class="my-3 border border-transparent" />
 		<div class="flex flex-row">
 			<button
-				class="w-max flex flex-row gap-1 items-center rounded-sm bg-primary-700 text-surface-50 px-6 py-1 transition enabled:hover:text-white enabled:hover:bg-primary-600"
+				disabled={loading}
+				class="flex flex-row gap-1 items-center justify-center rounded-sm bg-primary-700 text-surface-50 w-[150px] py-1 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
 			>
-				<svg
-					class="w-6 h-6"
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-				>
-					<path
-						fill="currentColor"
-						fill-rule="evenodd"
-						d="m9.94 12.646l-2.248-.749c-2.353-.784-3.53-1.176-3.53-1.897c0-.72 1.177-1.113 3.53-1.897l8.513-2.838c1.656-.552 2.484-.828 2.921-.391c.437.437.161 1.265-.39 2.92l-2.839 8.514c-.784 2.353-1.176 3.53-1.897 3.53c-.72 0-1.113-1.177-1.897-3.53l-.75-2.247l4.354-4.354a1 1 0 0 0-1.414-1.414z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-				Vote
+				{#if loading}
+					<svg
+						class="w-6 h-6"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="M12 20a8 8 0 0 0 8-8a8 8 0 0 0-8-8a8 8 0 0 0-8 8a8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10a10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67l-.75 1.23L11 13V7z"
+						/></svg
+					>
+					Validating...
+				{:else}
+					<svg
+						class="w-6 h-6"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+					>
+						<path
+							fill="currentColor"
+							fill-rule="evenodd"
+							d="m9.94 12.646l-2.248-.749c-2.353-.784-3.53-1.176-3.53-1.897c0-.72 1.177-1.113 3.53-1.897l8.513-2.838c1.656-.552 2.484-.828 2.921-.391c.437.437.161 1.265-.39 2.92l-2.839 8.514c-.784 2.353-1.176 3.53-1.897 3.53c-.72 0-1.113-1.177-1.897-3.53l-.75-2.247l4.354-4.354a1 1 0 0 0-1.414-1.414z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+					Vote
+				{/if}
 			</button>
 		</div>
 	</form>

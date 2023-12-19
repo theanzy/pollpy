@@ -1,4 +1,4 @@
-import { timestamp, integer, text, uuid, varchar } from 'drizzle-orm/pg-core';
+import { timestamp, integer, text, uuid, varchar, unique } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -113,3 +113,24 @@ export const insertPollRequest = z
 	});
 
 export type InsertPollRequest = z.infer<typeof insertPollRequest>;
+
+export const votes = mySchema.table(
+	'votes',
+	{
+		id: uuid('id')
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
+		pollId: uuid('poll_id')
+			.references(() => polls.id, { onDelete: 'cascade' })
+			.notNull(),
+		answerId: uuid('answer_id')
+			.references(() => answers.id, { onDelete: 'cascade' })
+			.notNull(),
+		voterKey: text('voter_key').notNull()
+	},
+	(t) => {
+		return {
+			uniq: unique().on(t.pollId, t.answerId, t.voterKey)
+		};
+	}
+);
