@@ -2,6 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import ShareVoteButton from '$lib/components/ShareVoteButton.svelte';
 	import { dateMoment } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
@@ -133,7 +134,7 @@
 		<div class="flex flex-row gap-6">
 			<button
 				disabled={loading}
-				class="text-sm flex flex-row gap-1 items-center border-none justify-center rounded-sm bg-primary-700 text-surface-50 w-[150px] py-2 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
+				class="text-sm flex flex-row gap-1 items-center border-none justify-center rounded-sm bg-primary-700 text-surface-50 w-[160px] py-2 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
 			>
 				{#if loading}
 					<svg
@@ -171,7 +172,7 @@
 				on:click={() => {
 					goto(`${$page.params.slug}/result`);
 				}}
-				class="text-sm flex flex-row gap-2 items-center justify-center w-[150px] py-2 rounded-sm border border-surface-600 bg-surface-900 font-medium transition enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-surface-400"
+				class="mr-auto text-xs sm:text-sm flex rounded-sm flex-row gap-2 items-center justify-center w-[160px] py-2 border border-surface-600 bg-surface-900 font-medium transition enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-surface-400"
 			>
 				<svg
 					class="w-5 h-5"
@@ -187,6 +188,7 @@
 				</svg>
 				See Results
 			</button>
+			<ShareVoteButton />
 		</div>
 	</form>
 	<hr class="my-2 border border-transparent" />

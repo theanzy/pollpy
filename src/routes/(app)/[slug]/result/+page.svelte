@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import PieChart from '$lib/components/PieChart.svelte';
 	import Progressbar from '$lib/components/Progressbar.svelte';
+	import ShareVoteButton from '$lib/components/ShareVoteButton.svelte';
 	import { dateMoment } from '$lib/utils.js';
 
 	export let data;
@@ -72,25 +73,28 @@
 			</div>
 		{/if}
 
-		<hr class="border border-transparent my-2" />
-		<a
-			href="/{$page.params.slug}"
-			class="flex flex-row gap-1 items-center justify-center text-sm w-[150px] bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition hover:text-white hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400"
-		>
-			<svg
-				class="w-5 h-5"
-				xmlns="http://www.w3.org/2000/svg"
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
+		<hr class="border border-transparent my-3" />
+		<div class="flex flex-row justify-between">
+			<a
+				href="/{$page.params.slug}"
+				class="flex flex-row gap-1 items-center justify-center text-sm w-[150px] bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition hover:text-white hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400"
 			>
-				<path
-					fill="currentColor"
-					d="M11.707 5.293a1 1 0 0 1 0 1.414L7.414 11H19a1 1 0 1 1 0 2H7.414l4.293 4.293a1 1 0 0 1-1.414 1.414l-6-6a1 1 0 0 1 0-1.414l6-6a1 1 0 0 1 1.414 0"
-				/>
-			</svg>
-			Back to poll
-		</a>
+				<svg
+					class="w-5 h-5"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+				>
+					<path
+						fill="currentColor"
+						d="M11.707 5.293a1 1 0 0 1 0 1.414L7.414 11H19a1 1 0 1 1 0 2H7.414l4.293 4.293a1 1 0 0 1-1.414 1.414l-6-6a1 1 0 0 1 0-1.414l6-6a1 1 0 0 1 1.414 0"
+					/>
+				</svg>
+				Back to poll
+			</a>
+			<ShareVoteButton slug={$page.params.slug} />
+		</div>
 	</div>
 {:else}
 	<div class="mt-10 text-center">
