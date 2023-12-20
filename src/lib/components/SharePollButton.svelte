@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { clickOutside } from '$lib/clickoutside';
 	import createPopperAction from '$lib/popover';
+	import { cn } from '$lib/utils';
 	import Modal from './Modal.svelte';
 
 	export let slug = '';
@@ -34,7 +35,10 @@
 	on:click={() => {
 		open = true;
 	}}
-	class="w-[160px] text-sm flex flex-row gap-2 justify-center items-center bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition enabled:hover:text-white enabled:hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400"
+	class={cn(
+		'w-[160px] text-sm flex flex-row gap-2 justify-center items-center bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition enabled:hover:text-white enabled:hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400',
+		$$restProps.class
+	)}
 >
 	<svg
 		class="w-5 h-5"
@@ -53,6 +57,7 @@
 
 <Modal bind:open closeButton>
 	<div
+		class="lg:w-[50dvw]"
 		use:clickOutside={() => {
 			open = false;
 		}}

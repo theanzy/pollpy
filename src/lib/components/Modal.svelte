@@ -3,6 +3,7 @@
 	import { trapFocus } from '$lib/trapfocus';
 	import { createEventDispatcher } from 'svelte';
 	import XButton from './XButton.svelte';
+	import Portal from './Portal.svelte';
 	export let open = false;
 	export let closeButton = false;
 
@@ -21,23 +22,29 @@
 	}}
 />
 {#if open}
-	<div use:trapFocus class="bg-black/30 fixed inset-0 w-full h-full grid place-items-center z-10">
+	<Portal target="#mainLayout">
 		<div
-			class="bg-surface-800 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
-			transition:fadeFly={{
-				y: 200,
-				duration: 100
-			}}
+			use:trapFocus
+			style="position: fixed; top:0; bottom:0;"
+			class="bg-black/30 fixed inset-0 w-full h-full grid place-items-center z-10"
 		>
-			{#if closeButton}
-				<XButton
-					aria-label="close modal"
-					class="absolute top-2 right-2 z-10"
-					on:click={handleClose}
-				/>
-			{/if}
+			<div
+				class="bg-surface-800 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
+				transition:fadeFly={{
+					y: 200,
+					duration: 100
+				}}
+			>
+				{#if closeButton}
+					<XButton
+						aria-label="close modal"
+						class="absolute top-2 right-2 z-10"
+						on:click={handleClose}
+					/>
+				{/if}
 
-			<slot />
+				<slot />
+			</div>
 		</div>
-	</div>
+	</Portal>
 {/if}

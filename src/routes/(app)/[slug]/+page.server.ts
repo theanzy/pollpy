@@ -5,7 +5,8 @@ import { base64toUUID, sha256 } from '$lib/server/utils.js';
 import { fail } from '@sveltejs/kit';
 import { and, eq, inArray } from 'drizzle-orm';
 
-export async function load({ params }) {
+export async function load({ params, locals, cookies }) {
+	const session = await locals.auth.validate();
 	const slug = params.slug;
 	try {
 		const res = await db
@@ -45,7 +46,10 @@ export async function load({ params }) {
 				delete result['answer'];
 			}
 			console.log('res[0]', result);
+			const creatorId = session?.user?.userId ?? cookies.get('pollpy_guess_session');
+			console.log('createdId', res[0].createdBy, creatorId);
 			return {
+				createdByMe: creatorId === res[0].createdBy,
 				poll: result
 			};
 		}

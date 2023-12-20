@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import PieChart from '$lib/components/PieChart.svelte';
 	import Progressbar from '$lib/components/Progressbar.svelte';
-	import ShareVoteButton from '$lib/components/ShareVoteButton.svelte';
+	import ShareVoteButton from '$lib/components/SharePollButton.svelte';
 	import { dateMoment } from '$lib/utils.js';
 
 	export let data;

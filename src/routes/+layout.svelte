@@ -16,6 +16,6 @@
 	}}
 />
 
-<div class="min-h-screen bg-surface-900 text-surface-200">
+<div id="mainLayout" class="min-h-screen bg-surface-900 text-surface-200">
 	<slot />
 </div>

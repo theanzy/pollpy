@@ -2,7 +2,8 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ShareVoteButton from '$lib/components/ShareVoteButton.svelte';
+	import MoreOptionsButton from '$lib/components/MoreOptionsButton.svelte';
+	import ShareVoteButton from '$lib/components/SharePollButton.svelte';
 	import { dateMoment } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
@@ -74,8 +75,13 @@
 		on:submit={handleSubmit}
 		method="post"
 		action="?/vote"
-		class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
+		class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto relative"
 	>
+		{#if data.createdByMe}
+			<div class="absolute top-5 right-8">
+				<MoreOptionsButton slug={$page.params.slug} />
+			</div>
+		{/if}
 		<h2 class="text-xl font-semibold text-surface-50">{poll.title}</h2>
 		<p>
 			by {poll.creatorName} <span class="mx-1">·</span>
