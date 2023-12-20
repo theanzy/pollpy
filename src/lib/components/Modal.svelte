@@ -3,7 +3,7 @@
 	import { trapFocus } from '$lib/trapfocus';
 	import { createEventDispatcher } from 'svelte';
 	import XButton from './XButton.svelte';
-	import Portal from './Portal.svelte';
+	import { beforeNavigate } from '$app/navigation';
 	export let open = false;
 	export let closeButton = false;
 
@@ -12,6 +12,9 @@
 		dispatch('close');
 		open = false;
 	};
+	beforeNavigate(() => {
+		open = false;
+	});
 </script>
 
 <svelte:body
@@ -22,29 +25,26 @@
 	}}
 />
 {#if open}
-	<Portal target="#mainLayout">
+	<div
+		use:trapFocus
+		class="bg-black/30 fixed inset-0 w-full h-full grid place-items-center z-20 text-surface-200"
+	>
 		<div
-			use:trapFocus
-			style="position: fixed; top:0; bottom:0;"
-			class="bg-black/30 fixed inset-0 w-full h-full grid place-items-center z-10"
+			class="bg-surface-800 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
+			transition:fadeFly={{
+				y: 200,
+				duration: 100
+			}}
 		>
-			<div
-				class="bg-surface-800 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
-				transition:fadeFly={{
-					y: 200,
-					duration: 100
-				}}
-			>
-				{#if closeButton}
-					<XButton
-						aria-label="close modal"
-						class="absolute top-2 right-2 z-10"
-						on:click={handleClose}
-					/>
-				{/if}
+			{#if closeButton}
+				<XButton
+					aria-label="close modal"
+					class="absolute top-2 right-2 z-10"
+					on:click={handleClose}
+				/>
+			{/if}
 
-				<slot />
-			</div>
+			<slot />
 		</div>
-	</Portal>
+	</div>
 {/if}

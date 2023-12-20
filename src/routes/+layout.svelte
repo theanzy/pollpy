@@ -1,4 +1,5 @@
 <script>
+	import SharePollModal from '$lib/components/SharePollModal.svelte';
 	import '../global.css';
 	import { Toaster } from 'svelte-french-toast';
 </script>
@@ -15,7 +16,7 @@
 		duration: 2000
 	}}
 />
-
+<SharePollModal />
 <div id="mainLayout" class="min-h-screen bg-surface-900 text-surface-200">
 	<slot />
 </div>

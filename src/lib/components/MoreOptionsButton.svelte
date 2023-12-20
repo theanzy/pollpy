@@ -39,7 +39,6 @@
 		use:usePopperContent={{
 			onClickOutside() {
 				menuOpen = false;
-				console.log('cl');
 			},
 			params: {
 				placement: 'bottom-end'

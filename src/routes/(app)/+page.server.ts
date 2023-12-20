@@ -2,9 +2,12 @@ import { fail, redirect } from '@sveltejs/kit';
 
 import type { PageServerLoad, Actions } from './$types';
 import { auth } from '$lib/server/lucia';
+import { uuidToBase64 } from '$lib/server/utils';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
+	console.log(uuidToBase64('2f9a56e6-c3ee-4a91-a238-648cf504cc88'));
+
 	return {
 		user: session?.user
 	};
