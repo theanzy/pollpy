@@ -28,7 +28,7 @@
 								<div class="flex flex-row gap-2 items-center justify-between mb-1">
 									<p>{vote.answer.label}</p>
 									<div class="flex flex-row gap-2">
-										<p>{votePercent}%</p>
+										<p>{votePercent.toFixed(2)}%</p>
 										<p>({vote.count} votes)</p>
 									</div>
 								</div>
@@ -62,7 +62,9 @@
 						</div>
 						<div class="py-1">
 							<p class="text-surface-100">{imageLabel}</p>
-							<p class="text-sm">{votePercent}% <span class="ml-1">({vote.count} votes)</span></p>
+							<p class="text-sm">
+								{votePercent.toFixed(2)}% <span class="ml-1">({vote.count} votes)</span>
+							</p>
 						</div>
 					</div>
 				{/each}
