@@ -49,18 +49,19 @@
 				</div>
 			</div>
 		{:else if pollResult.poll.type === 'image'}
+			<p class="mt-4 mb-2 text-surface-100">Total votes: {pollResult.totalVotes}</p>
 			<div
-				class="rounded border border-surface-700 grid grid-cols-1 md:grid-cols-2 md:divide-x divide-y divide-surface-700"
+				class="rounded border border-surface-700 grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-surface-700 overflow-hidden"
 			>
 				{#each pollResult.result as vote, idx (vote.answer.id)}
 					{@const imageLabel = vote.answer.label ?? `Option ${idx + 1}`}
 					{@const votePercent =
 						pollResult.totalVotes === 0 ? 0 : (vote.count / pollResult.totalVotes) * 100}
-					<div class="flex flex-row gap-5 py-2 px-2">
+					<div class="flex flex-row gap-5 bg-surface-900">
 						<div class="overflow-hidden w-[200px]">
 							<img class="h-[150px] w-auto mx-auto" alt={imageLabel} src={vote.answer.image} />
 						</div>
-						<div class="py-1">
+						<div class="flex flex-col justify-center px-4">
 							<p class="text-surface-100">{imageLabel}</p>
 							<p class="text-sm">
 								{votePercent.toFixed(2)}% <span class="ml-1">({vote.count} votes)</span>

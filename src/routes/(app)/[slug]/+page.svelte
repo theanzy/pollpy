@@ -81,7 +81,7 @@
 			{dateMoment(poll.createdAt, new Date())}
 		</p>
 		<hr class="my-2 border border-transparent" />
-		<p class="mb-2">Make a choice:</p>
+		<p class="mb-2 text-sm">You can choose at most {poll.maxChoice} answers:</p>
 		{#if poll.type === 'text'}
 			<fieldset class="flex flex-col gap-2">
 				{#each poll.answers as answer (answer.id)}
@@ -99,10 +99,10 @@
 			</fieldset>
 		{:else if poll.type === 'image'}
 			<fieldset
-				class="grid grid-cols-1 lg:grid-cols-2 divide-y md:divide-x divide-surface-700 border border-surface-700"
+				class="grid grid-cols-1 lg:grid-cols-2 bg-surface-700 overflow-hidden rounded gap-[1px] border border-surface-700"
 			>
 				{#each poll.answers as answer (answer.id)}
-					<div class="flex items-center gap-1 px-4 py-2 group overflow-hidden">
+					<div class="flex items-center gap-1 px-4 py-2 group overflow-hidden bg-surface-800">
 						<input
 							class="relative float-left h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:content-[''] after:absolute after:z-[1] after:block after:h-5 after:w-4 after:rounded-full after:content-[''] checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] checked:focus:before:scale-100 dark:border-neutral-600 checked:border-primary-500 checked:after:border-primary-500 checked:after:bg-primary-500 checked:focus:border-primary-500"
 							id={answer.id}
