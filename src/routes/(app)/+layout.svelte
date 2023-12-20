@@ -2,10 +2,13 @@
 	import CreatePollLink from '$lib/components/CreatePollLink.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import UserButton from '$lib/components/UserButton.svelte';
-
+	import SharePollModal from '$lib/components/SharePollModal.svelte';
+	import DeletePollModal from '$lib/components/DeletePollModal.svelte';
 	export let data;
 </script>
 
+<SharePollModal />
+<DeletePollModal />
 <main class="min-h-[100dvh] text-surface-200">
 	<nav>
 		<div class="max-w-5xl mx-auto py-5 px-5 flex flex-row gap-3 items-center">

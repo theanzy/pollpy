@@ -1,14 +1,13 @@
 <script lang="ts">
-	import Modal from './Modal.svelte';
-
+	import { deletePollModalStore } from '$lib/modalStore';
 	export let slug: string;
-
-	let openModal = false;
 </script>
 
 <button
 	on:click={() => {
-		openModal = true;
+		deletePollModalStore.openModal({
+			slug: slug
+		});
 	}}
 	type="button"
 	class="flex flex-row gap-2 items-center text-rose-500"
@@ -21,29 +20,3 @@
 	>
 	Delete
 </button>
-
-{#if openModal}
-	<Modal bind:open={openModal} closeButton>
-		<h2 class="pt-4 px-5 font-medium flex flex-row gap-2 items-center text-lg">
-			<svg
-				class="w-5 h-5"
-				xmlns="http://www.w3.org/2000/svg"
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
-			>
-				<g fill="none"
-					><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path
-						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-width="1.5"
-						d="M12 7v6"
-					/><circle cx="12" cy="16" r="1" fill="currentColor" /></g
-				>
-			</svg>
-			Delete Poll
-		</h2>
-
-		<form></form>
-	</Modal>
-{/if}

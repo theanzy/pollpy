@@ -174,5 +174,39 @@ export const actions = {
 				error: 'Something went wrong'
 			});
 		}
+	},
+	async delete({ locals, cookies, params }) {
+		try {
+			const session = await locals.auth.validate();
+			const creatorId = session?.user.userId ?? cookies.get('pollpy_guess_session');
+			if (!creatorId) {
+				return fail(400, {
+					status: 'unauthorized',
+					error: 'You are not allowed to delete this poll'
+				});
+			}
+			const pollRes = await db
+				.select({ id: polls.id })
+				.from(polls)
+				.where(() => and(eq(polls.createdBy, creatorId), eq(polls.id, base64toUUID(params.slug))));
+			const poll = pollRes[0];
+			if (!poll) {
+				return fail(400, {
+					status: 'unauthorized',
+					error: 'You are not allowed to delete this poll'
+				});
+			}
+			await db.delete(polls).where(eq(polls.id, poll.id));
+
+			return {
+				status: 'success'
+			};
+		} catch (error) {
+			console.log('delete poll error', error);
+			return fail(500, {
+				status: 'error',
+				error: 'Something went wrong'
+			});
+		}
 	}
 };

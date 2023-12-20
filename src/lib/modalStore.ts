@@ -15,9 +15,11 @@ function createModalStore<ParamT>() {
 			update(() => ({ params, open: true }));
 		},
 		closeModal() {
-			update((prev) => ({ ...prev, open: false }));
+			update(() => ({ prev: undefined, open: false }));
 		}
 	};
 }
 
 export const sharePollModalStore = createModalStore<{ link: string }>();
+
+export const deletePollModalStore = createModalStore<{ slug: string }>();
