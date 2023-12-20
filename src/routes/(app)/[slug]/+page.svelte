@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { dateMoment } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
@@ -128,14 +130,14 @@
 			</fieldset>
 		{/if}
 		<hr class="my-3 border border-transparent" />
-		<div class="flex flex-row">
+		<div class="flex flex-row gap-6">
 			<button
 				disabled={loading}
-				class="flex flex-row gap-1 items-center justify-center rounded-sm bg-primary-700 text-surface-50 w-[150px] py-1 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
+				class="text-sm flex flex-row gap-1 items-center border-none justify-center rounded-sm bg-primary-700 text-surface-50 w-[150px] py-2 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
 			>
 				{#if loading}
 					<svg
-						class="w-6 h-6"
+						class="w-5 h-5"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
 						height="24"
@@ -148,7 +150,7 @@
 					Validating...
 				{:else}
 					<svg
-						class="w-6 h-6"
+						class="w-5 h-5"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
 						height="24"
@@ -164,20 +166,35 @@
 					Vote
 				{/if}
 			</button>
+			<button
+				type="button"
+				on:click={() => {
+					goto(`${$page.params.slug}/result`);
+				}}
+				class="text-sm flex flex-row gap-2 items-center justify-center w-[150px] py-2 rounded-sm border border-surface-600 bg-surface-900 font-medium transition enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-surface-400"
+			>
+				<svg
+					class="w-5 h-5"
+					xmlns="http://www.w3.org/2000/svg"
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+				>
+					<path
+						fill="currentColor"
+						d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"
+					/>
+				</svg>
+				See Results
+			</button>
 		</div>
 	</form>
 	<hr class="my-2 border border-transparent" />
 	<div class="flex flex-row gap-1 items-center justify-center text-surface-300">
-		<svg
-			class="w-4 h-4"
-			xmlns="http://www.w3.org/2000/svg"
-			width="100"
-			height="100"
-			viewBox="0 0 100 100"
-		>
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
 			<path
 				fill="currentColor"
-				d="M82.105 44.218h-8.858v-8.431c.003-.036.003-.071.003-.102c0-13.073-10.636-23.71-23.713-23.71c-13.073 0-23.71 10.637-23.71 23.71v8.533h-7.931a2.62 2.62 0 0 0-2.621 2.621v38.565a2.62 2.62 0 0 0 2.621 2.621h64.21a2.62 2.62 0 0 0 2.621-2.621V46.839a2.621 2.621 0 0 0-2.622-2.621m-42.314-8.533c0-5.375 4.371-9.741 9.746-9.741c5.341 0 9.695 4.32 9.747 9.649l-.003.031h.003v8.594H39.791z"
+				d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"
 			/>
 		</svg>
 		{#if poll.identifyVoteBy === 'cookie session'}
