@@ -188,7 +188,7 @@
 				</svg>
 				See Results
 			</button>
-			<ShareVoteButton />
+			<ShareVoteButton slug={$page.params.slug} />
 		</div>
 	</form>
 	<hr class="my-2 border border-transparent" />
