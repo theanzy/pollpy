@@ -2,6 +2,7 @@
 	import { clickOutside } from '$lib/clickoutside';
 	import { sharePollModalStore } from '$lib/modalStore';
 	import createPopperAction from '$lib/popover';
+	import { fade } from 'svelte/transition';
 	import Modal from './Modal.svelte';
 	let copyTooltipOpen = false;
 	let timeout: NodeJS.Timeout | undefined = undefined;
@@ -83,6 +84,7 @@
 
 				{#if copyTooltipOpen}
 					<div
+						transition:fade={{ duration: 300 }}
 						use:usePopperContent={{
 							params: {
 								placement: 'top',
