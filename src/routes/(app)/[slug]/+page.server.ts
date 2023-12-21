@@ -46,7 +46,7 @@ export async function load({ params, locals, cookies }) {
 				delete result['answer'];
 			}
 			console.log('res[0]', result);
-			const creatorId = session?.user?.userId ?? cookies.get('pollpy_guess_session');
+			const creatorId = session?.user?.userId ?? cookies.get('pollpy_guest_session');
 			console.log('createdId', res[0].createdBy, creatorId);
 			return {
 				createdByMe: creatorId === res[0].createdBy,
@@ -71,7 +71,7 @@ export const actions = {
 		const answerIds = JSON.parse(answersStr) as string[];
 		const pollId = formdata.get('pollId') as string;
 		const session = await locals.auth.validate();
-		const guestSessionId = cookies.get('pollpy_guess_session');
+		const guestSessionId = cookies.get('pollpy_guest_session');
 
 		// validation
 		if (Array.isArray(answerIds) === false) {
@@ -178,7 +178,21 @@ export const actions = {
 	async delete({ locals, cookies, params }) {
 		try {
 			const session = await locals.auth.validate();
-			const creatorId = session?.user.userId ?? cookies.get('pollpy_guess_session');
+			const guestid = cookies.get('pollpy_guest_session');
+			if (!session && guestid) {
+				const userRes = await db
+					.select({ id: users.id })
+					.from(users)
+					.where(() => eq(users.id, guestid));
+				if (userRes[0]) {
+					return fail(400, {
+						status: 'unauthorized',
+						error: 'You are not allowed to delete this poll'
+					});
+				}
+			}
+
+			const creatorId = session?.user.userId ?? guestid;
 			if (!creatorId) {
 				return fail(400, {
 					status: 'unauthorized',

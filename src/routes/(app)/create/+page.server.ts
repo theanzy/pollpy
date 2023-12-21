@@ -28,7 +28,7 @@ export const actions: Actions = {
 				error: errors
 			});
 		}
-		const creatorId = session?.user?.userId ?? (cookies.get('pollpy_guess_session') as string);
+		const creatorId = session?.user?.userId ?? (cookies.get('pollpy_guest_session') as string);
 		try {
 			const res = await db.transaction(async (tx) => {
 				const poll = await tx
