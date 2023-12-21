@@ -11,6 +11,10 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { focus } from '$lib/utils';
 	import toast from 'svelte-french-toast';
+	import SaveAsDraftButton from '$lib/components/SaveAsDraftButton.svelte';
+
+	export let data;
+	$: ({ user } = data);
 
 	let loading = false;
 
@@ -246,11 +250,18 @@
 		Add Answer
 	</button>
 	<hr class="my-6 border-transparent" />
-	<button
-		disabled={loading}
-		type="submit"
-		class="max-w-max px-6 py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
-	>
-		Create poll
-	</button>
+	<div class="flex flex-row gap-5">
+		<button
+			disabled={loading}
+			type="submit"
+			class="w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
+		>
+			{#if loading}
+				Creating...
+			{:else}
+				Create poll
+			{/if}
+		</button>
+		<SaveAsDraftButton {loading} {user} />
+	</div>
 </form>

@@ -3,6 +3,13 @@ import { answers, insertPollRequest, polls } from '$lib/server/schema/poll';
 import { uuidToBase64 } from '$lib/server/utils';
 import { fail, type Actions } from '@sveltejs/kit';
 
+export const load = async ({ locals }) => {
+	const session = await locals.auth.validate();
+	return {
+		user: session?.user
+	};
+};
+
 export const actions: Actions = {
 	default: async ({ locals, request, cookies }) => {
 		const session = await locals.auth.validate();

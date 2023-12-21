@@ -98,7 +98,7 @@
 								]
 							}
 						}}
-						class="py-2 px-4 text-surface-50 text-sm rounded bg-black shadow"
+						class="py-2 px-4 text-surface-50 text-sm rounded bg-gray-900 shadow"
 					>
 						Copied
 					</div>
