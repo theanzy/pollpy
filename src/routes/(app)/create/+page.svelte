@@ -12,11 +12,13 @@
 	import { focus } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 	import SaveAsDraftButton from '$lib/components/SaveAsDraftButton.svelte';
+	import { page } from '$app/stores';
 
 	export let data;
 	$: ({ user } = data);
 
 	let loading = false;
+	let formaction = '';
 
 	let answers: {
 		id: string;
@@ -62,8 +64,10 @@
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
 		e.preventDefault();
 		const formdata = new FormData(e.currentTarget);
-		console.log('event.currentTarget.action', e.currentTarget.action);
-
+		const submitter: HTMLButtonElement = (e as unknown as { submitter: HTMLButtonElement })
+			.submitter;
+		e.currentTarget.action = submitter.formAction;
+		formaction = e.currentTarget.action.replace($page.url.origin, '');
 		// validation
 		if (pollType === 'image') {
 			let newAnswers = answers;
@@ -133,7 +137,6 @@
 <form
 	on:submit={handleSubmit}
 	method="POST"
-	action=""
 	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
 >
 	<label for="title" class="font-medium mb-1">Title</label>
@@ -253,15 +256,20 @@
 	<div class="flex flex-row gap-5">
 		<button
 			disabled={loading}
+			formaction="?/add"
 			type="submit"
 			class="w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
 		>
-			{#if loading}
+			{#if loading && formaction === '/create?/add'}
 				Creating...
 			{:else}
 				Create poll
 			{/if}
 		</button>
-		<SaveAsDraftButton {loading} {user} />
+		<SaveAsDraftButton
+			disabled={loading}
+			loading={loading && formaction === '/create?/draft'}
+			{user}
+		/>
 	</div>
 </form>

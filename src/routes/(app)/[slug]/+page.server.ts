@@ -19,19 +19,27 @@ export async function load({ params, locals, cookies }) {
 				createdAt: polls.createdAt,
 				maxChoice: polls.maxChoice,
 				identifyVoteBy: polls.identifyVoteBy,
+				status: polls.status,
 				answer: answers
 			})
 			.from(polls)
 			.leftJoin(users, eq(users.id, polls.createdBy))
 			.innerJoin(answers, eq(polls.id, answers.pollId))
 			.where(eq(polls.id, base64toUUID(slug)));
+		const poll = res[0];
+
+		if (poll.status === 'draft' && poll.createdBy !== session?.user.userId) {
+			return {
+				poll: null
+			};
+		}
 
 		type PollWithAnswers = Omit<(typeof res)[0], 'answer'> & {
 			answers: Array<(typeof res)[0]['answer']>;
 		};
 
-		if (res[0]) {
-			res[0].creatorName = res[0].creatorName ?? 'a guest';
+		if (poll) {
+			poll.creatorName = poll.creatorName ?? 'a guest';
 			const result = res.reduce(
 				(result, poll) => {
 					if (!result.answers) {
@@ -40,12 +48,12 @@ export async function load({ params, locals, cookies }) {
 					result.answers.push(poll.answer);
 					return result;
 				},
-				res[0] as unknown as PollWithAnswers
+				poll as unknown as PollWithAnswers
 			);
 			if ('answer' in result) {
 				delete result['answer'];
 			}
-			console.log('res[0]', result);
+			console.log('result poll', result);
 			const creatorId = session?.user?.userId ?? cookies.get('pollpy_guest_session');
 			console.log('createdId', res[0].createdBy, creatorId);
 			return {
@@ -90,7 +98,7 @@ export const actions = {
 				})
 				.from(polls)
 				.innerJoin(answers, eq(answers.pollId, polls.id))
-				.where(() => eq(polls.id, pollId));
+				.where(() => and(eq(polls.id, pollId), eq(polls.status, 'active')));
 
 			if (!existingPolls[0]) {
 				return fail(400, {

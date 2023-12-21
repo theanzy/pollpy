@@ -3,6 +3,7 @@
 	import type { User } from 'lucia';
 	import { fade } from 'svelte/transition';
 
+	export let disabled: boolean | undefined = undefined;
 	export let loading: boolean;
 	export let user: User | undefined;
 	let tooltipOpen = false;
@@ -30,8 +31,8 @@
 			e.preventDefault();
 		}
 	}}
-	disabled={loading}
-	formaction="/create/?/draft"
+	{disabled}
+	formaction="/create?/draft"
 	type="submit"
 	class="flex flex-row gap-1 items-center justify-center w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-surface-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-surface-500 enabled:hover:text-white enabled:hover:bg-surface-600"
 >

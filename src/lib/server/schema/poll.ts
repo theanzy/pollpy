@@ -22,7 +22,10 @@ export const polls = mySchema.table('polls', {
 	}).notNull(),
 	createdBy: text('created_by').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow(),
-	closedAt: timestamp('closed_at')
+	closedAt: timestamp('closed_at'),
+	status: varchar('status', {
+		length: 256
+	}).default('active')
 });
 
 export const insertPollSchema = createInsertSchema(polls, {
@@ -39,7 +42,8 @@ export const insertPollSchema = createInsertSchema(polls, {
 	identifyVoteBy: (schema) =>
 		schema.identifyVoteBy.min(1, 'maxChoice is too low. minimum is 1').optional(),
 	createdBy: (schema) => schema.createdBy.optional(),
-	createdAt: (schema) => schema.createdAt.optional()
+	createdAt: (schema) => schema.createdAt.optional(),
+	status: (schema) => schema.status.optional()
 });
 
 export const answers = mySchema.table('answers', {

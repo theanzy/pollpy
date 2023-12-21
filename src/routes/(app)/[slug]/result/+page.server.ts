@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 import { db } from '$lib/server/drizzle';
 import { answers, polls, votes } from '$lib/server/schema/poll';
@@ -25,7 +25,7 @@ export async function load({ params }) {
 			})
 			.from(polls)
 			.leftJoin(users, eq(users.id, polls.createdBy))
-			.where(() => eq(polls.id, pollId));
+			.where(() => and(eq(polls.id, pollId), eq(polls.status, 'active')));
 		const poll = pollRes[0];
 		if (!poll?.id) {
 			return {
