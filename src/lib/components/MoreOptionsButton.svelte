@@ -3,8 +3,10 @@
 	import { fade } from 'svelte/transition';
 	import SharePollButton from './SharePollButton.svelte';
 	import DeletePollButton from './DeletePollButton.svelte';
+	import type { PollWithAnswers } from '$lib/server/schema/poll';
 
 	export let slug: string;
+	export let poll: PollWithAnswers;
 
 	let menuOpen = false;
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
@@ -76,10 +78,12 @@
 			>
 			Poll Settings
 		</button>
-		<SharePollButton
-			class="bg-transparent justify-start text-base border-none text-surface-200"
-			{slug}
-		/>
+		{#if poll.status === 'active'}
+			<SharePollButton
+				class="bg-transparent justify-start text-base border-none text-surface-200"
+				{slug}
+			/>
+		{/if}
 		<hr class="border-b border-transparent border-b-surface-600" />
 		<DeletePollButton {slug} />
 	</div>

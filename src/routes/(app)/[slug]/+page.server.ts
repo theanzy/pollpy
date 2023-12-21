@@ -1,11 +1,12 @@
 import { db } from '$lib/server/drizzle.js';
-import { answers, polls, votes } from '$lib/server/schema/poll.js';
+import { answers, polls, votes, type PollWithAnswers } from '$lib/server/schema/poll.js';
 import { users } from '$lib/server/schema/user.js';
 import { base64toUUID, sha256 } from '$lib/server/utils.js';
 import { fail } from '@sveltejs/kit';
 import { and, eq, inArray } from 'drizzle-orm';
 
-export async function load({ params, locals, cookies }) {
+export async function load({ params, locals, cookies, depends }) {
+	depends('poll');
 	const session = await locals.auth.validate();
 	const slug = params.slug;
 	try {
@@ -33,10 +34,6 @@ export async function load({ params, locals, cookies }) {
 				poll: null
 			};
 		}
-
-		type PollWithAnswers = Omit<(typeof res)[0], 'answer'> & {
-			answers: Array<(typeof res)[0]['answer']>;
-		};
 
 		if (poll) {
 			poll.creatorName = poll.creatorName ?? 'a guest';
@@ -228,6 +225,44 @@ export const actions = {
 			return fail(500, {
 				status: 'error',
 				error: 'Something went wrong'
+			});
+		}
+	},
+	async activate({ locals, params }) {
+		try {
+			const session = await locals.auth.validate();
+			if (!session?.user) {
+				return fail(401, {
+					status: 'unauthorized',
+					error: 'You are not allowed to perform this action'
+				});
+			}
+
+			const pollId = base64toUUID(params.slug);
+			const pollRes = await db
+				.select({ id: polls.id })
+				.from(polls)
+				.where(() => and(eq(polls.id, pollId), eq(polls.createdBy, session.user.userId)));
+			if (!pollRes[0]) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'Cannot activate this poll'
+				});
+			}
+			await db
+				.update(polls)
+				.set({
+					status: 'active'
+				})
+				.where(eq(polls.id, pollId));
+			return {
+				status: 'success'
+			};
+		} catch (error) {
+			console.log('error activate poll', error);
+			return fail(500, {
+				status: 'error',
+				error: 'someting went wrong'
 			});
 		}
 	}

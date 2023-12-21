@@ -138,3 +138,8 @@ export const votes = mySchema.table(
 		};
 	}
 );
+
+export type PollWithAnswers = typeof polls.$inferSelect & {
+	answers: (typeof answers.$inferSelect)[];
+	creatorName: string;
+};
