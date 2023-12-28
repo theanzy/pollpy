@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { deserialize } from '$app/forms';
 	import { invalidate } from '$app/navigation';
+	import { cn } from '$lib/utils';
 	import toast from 'svelte-french-toast';
 
 	export let slug: string;
@@ -42,7 +43,10 @@
 <form method="post" action="/{slug}?/activate" on:submit={handleSubmit}>
 	<button
 		type="submit"
-		class="flex flex-row items-center justify-center py-2 w-[150px] rounded-sm text-surface-100 gap-2 text-sm font-medium outline-none transition focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-700 bg-secondary-700 hover:text-white hover:bg-secondary-800"
+		class={cn(
+			'flex flex-row items-center justify-center py-2 rounded-sm text-surface-100 gap-2 text-sm font-medium outline-none transition focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-700 bg-secondary-700 hover:text-white hover:bg-secondary-800',
+			$$restProps.class
+		)}
 	>
 		<svg
 			class="w-4 h-4"

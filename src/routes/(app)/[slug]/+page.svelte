@@ -148,10 +148,10 @@
 			{/if}
 			{#if poll.status === 'active'}
 				<hr class="my-3 border border-transparent" />
-				<div class="flex flex-row gap-6">
+				<div class="flex flex-col md:flex-row gap-3 md:gap-6">
 					<button
 						disabled={loading}
-						class="text-sm flex flex-row gap-1 items-center border-none justify-center rounded-sm bg-primary-700 text-surface-50 w-[160px] py-2 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
+						class="text-sm flex flex-row gap-1 items-center border-none justify-center rounded-sm bg-primary-700 text-surface-50 w-full md:w-[150px] py-2 transition enabled:hover:text-white enabled:hover:bg-primary-600 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600"
 					>
 						{#if loading}
 							<svg
@@ -189,7 +189,7 @@
 						on:click={() => {
 							goto(`${$page.params.slug}/result`);
 						}}
-						class="mr-auto text-xs sm:text-sm flex rounded-sm flex-row gap-2 items-center justify-center w-[160px] py-2 border border-surface-600 bg-surface-900 font-medium transition enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-surface-400"
+						class="md:mr-auto text-sm flex rounded-sm flex-row gap-2 items-center justify-center w-full md:w-[150px] py-2 border border-surface-600 bg-surface-900 font-medium transition enabled:hover:bg-surface-800 outline-none focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-surface-400"
 					>
 						<svg
 							class="w-5 h-5"
@@ -205,13 +205,13 @@
 						</svg>
 						See Results
 					</button>
-					<ShareVoteButton slug={$page.params.slug} />
+					<ShareVoteButton class="w-full md:w-[150px] mt-1 md:mt-0" slug={$page.params.slug} />
 				</div>
 			{/if}
 		</form>
 		{#if poll.status === 'draft'}
 			<hr class="mt-5 border-transparent" />
-			<ActivatePollButton slug={$page.params.slug} />
+			<ActivatePollButton class="w-full md:w-[150px]" slug={$page.params.slug} />
 		{/if}
 	</div>
 
