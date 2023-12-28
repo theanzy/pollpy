@@ -83,7 +83,9 @@
 					{/if}
 					<hr class="border border-transparent my-1" />
 					<CreatePollLink />
-					<PollsLink />
+					{#if user}
+						<PollsLink />
+					{/if}
 					<hr class="border border-transparent" />
 					{#if !user}
 						<div class="flex flex-col gap-3">
