@@ -7,6 +7,7 @@
 	import SignupLink from './SignupLink.svelte';
 	import { fadeFly } from '$lib/transitions';
 	import { afterNavigate } from '$app/navigation';
+	import PollsLink from './PollsLink.svelte';
 
 	export let user: User | undefined;
 
@@ -82,6 +83,7 @@
 					{/if}
 					<hr class="border border-transparent my-1" />
 					<CreatePollLink />
+					<PollsLink />
 					<hr class="border border-transparent" />
 					{#if !user}
 						<div class="flex flex-col gap-3">
