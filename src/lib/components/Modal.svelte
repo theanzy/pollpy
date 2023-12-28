@@ -30,7 +30,7 @@
 		class="bg-black/30 fixed inset-0 w-full h-full grid place-items-center z-20 text-surface-200"
 	>
 		<div
-			class="bg-surface-800 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
+			class="bg-surface-800 border border-surface-700 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
 			transition:fadeFly={{
 				y: 200,
 				duration: 100

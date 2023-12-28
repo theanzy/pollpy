@@ -63,15 +63,19 @@
 </script>
 
 <Modal bind:open closeButton on:close={handleCloseModal}>
-	<div class="min-w-[500px] border border-surface-800" use:clickOutside={handleCloseModal}>
+	<div
+		class="w-full md:min-w-[500px] border border-surface-800"
+		use:clickOutside={handleCloseModal}
+	>
 		<h3 class="mt-3 mx-6 text-lg text-surface-50 font-medium">Upload File</h3>
 		<hr class="border border-transparent border-b-surface-700 my-4" />
 		<div class="px-6 mb-5">
 			<FileDropArea on:upload={handleUpload} disabled={loading} />
 			<button
+				type="button"
 				disabled={loading}
 				on:click={handleCloseModal}
-				class="mt-5 px-10 py-2 font-medium outline-none rounded-sm bg-secondary-600 text-surface-100 transition enabled:hover:bg-secondary-700 enabled:hover:text-surface-50 enabled:focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-600 disabled:opacity-50"
+				class="mt-5 px-10 py-2 font-medium w-full md:w-[150px] outline-none rounded-sm bg-secondary-600 text-surface-100 transition enabled:hover:bg-secondary-700 enabled:hover:text-surface-50 enabled:focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-secondary-600 disabled:opacity-50"
 			>
 				Cancel
 			</button>
