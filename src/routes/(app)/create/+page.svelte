@@ -137,7 +137,7 @@
 <form
 	on:submit={handleSubmit}
 	method="POST"
-	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-8 py-6 max-w-3xl mx-auto"
+	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-3 md:px-8 py-4 md:py-6 max-w-3xl mx-auto"
 >
 	<label for="title" class="font-medium mb-1">Title</label>
 	<div class="relative">
