@@ -79,11 +79,11 @@
 		<form
 			method="POST"
 			action="/{slug}/?/delete"
-			class="px-5 py-5 flex flex-row gap-5"
+			class="px-5 py-5 flex flex-col md:flex-row gap-3 md:gap-5"
 			on:submit={handleSubmit}
 		>
 			<button
-				class="ml-auto w-[150px] py-1 bg-surface-50 text-surface-950 font-medium outline-none hover:bg-primary-50 focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600 rounded-sm"
+				class="ml-auto w-full md:w-[150px] py-1 bg-surface-50 text-surface-950 font-medium outline-none hover:bg-primary-50 focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600 rounded-sm"
 				type="button"
 				on:click={() => {
 					$deletePollModalStore.open = false;
@@ -92,7 +92,7 @@
 			<button
 				disabled={loading}
 				type="submit"
-				class="w-[150px] py-1 bg-rose-700 text-surface-50 font-medium outline-none enabled:hover:bg-rose-800 enabled:hover:text-white focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-rose-800 rounded-sm"
+				class="w-full md:w-[150px] py-1 bg-rose-700 text-surface-50 font-medium outline-none enabled:hover:bg-rose-800 enabled:hover:text-white focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-rose-800 rounded-sm"
 			>
 				{#if loading}
 					Deleting...

@@ -85,6 +85,11 @@
 			/>
 		{/if}
 		<hr class="border-b border-transparent border-b-surface-600" />
-		<DeletePollButton {slug} />
+		<DeletePollButton
+			on:click={() => {
+				menuOpen = false;
+			}}
+			{slug}
+		/>
 	</div>
 {/if}

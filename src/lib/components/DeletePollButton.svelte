@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { deletePollModalStore } from '$lib/modalStore';
+	import { createEventDispatcher } from 'svelte';
 	export let slug: string;
+	const dispatch = createEventDispatcher<{
+		click: void;
+	}>();
 </script>
 
 <button
 	on:click={() => {
+		dispatch('click');
 		deletePollModalStore.openModal({
 			slug: slug
 		});
