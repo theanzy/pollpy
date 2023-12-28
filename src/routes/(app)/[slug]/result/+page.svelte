@@ -74,10 +74,10 @@
 		{/if}
 
 		<hr class="border border-transparent my-3" />
-		<div class="flex flex-row justify-between">
+		<div class="flex flex-col gap-3 md:flex-row justify-between">
 			<a
 				href="/{$page.params.slug}"
-				class="flex flex-row gap-1 items-center justify-center text-sm w-[150px] bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition hover:text-white hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400"
+				class="flex flex-row gap-1 items-center justify-center text-sm w-full md:w-[150px] bg-surface-900 border border-surface-600 text-surface-50 px-4 py-2 rounded-sm outline-none transition hover:text-white hover:bg-surface-800 ring-offset-2 ring-offset-surface-950 focus-visible:ring-1 ring-surface-400"
 			>
 				<svg
 					class="w-5 h-5"
@@ -93,7 +93,7 @@
 				</svg>
 				Back to poll
 			</a>
-			<ShareVoteButton slug={$page.params.slug} />
+			<ShareVoteButton class="w-full md:w-[150px]" slug={$page.params.slug} />
 		</div>
 	</div>
 {:else}

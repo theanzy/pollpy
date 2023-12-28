@@ -1,18 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { clickOutside } from '$lib/clickoutside';
 	import { sharePollModalStore } from '$lib/modalStore';
-	import createPopperAction from '$lib/popover';
 	import { cn } from '$lib/utils';
-	import Modal from './Modal.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let slug = '';
 	$: pollLink = `${$page.url.origin}/${slug}`;
+
+	const dispatch = createEventDispatcher<{
+		click: void;
+	}>();
 </script>
 
 <button
 	type="button"
 	on:click={() => {
+		dispatch('click');
 		sharePollModalStore.openModal({
 			link: pollLink
 		});
