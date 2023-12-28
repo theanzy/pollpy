@@ -80,7 +80,7 @@
 	>
 		<form on:submit={handleSubmit} method="post" action="?/vote">
 			{#if data.createdByMe}
-				<div class="absolute top-5 right-8">
+				<div class="absolute top-3 md:top-5 right-3 md:right-8">
 					<MoreOptionsButton {poll} slug={$page.params.slug} />
 				</div>
 			{/if}
