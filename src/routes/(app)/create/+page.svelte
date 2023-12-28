@@ -253,12 +253,12 @@
 		Add Answer
 	</button>
 	<hr class="my-6 border-transparent" />
-	<div class="flex flex-row gap-5">
+	<div class="flex md:flex-row flex-col gap-5">
 		<button
 			disabled={loading}
 			formaction="?/add"
 			type="submit"
-			class="w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
+			class="w-full md:w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
 		>
 			{#if loading && formaction === '/create?/add'}
 				Creating...
@@ -267,6 +267,7 @@
 			{/if}
 		</button>
 		<SaveAsDraftButton
+			class="w-full md:w-[150px]"
 			disabled={loading}
 			loading={loading && formaction === '/create?/draft'}
 			{user}
