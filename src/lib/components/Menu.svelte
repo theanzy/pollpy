@@ -86,7 +86,6 @@
 					{#if user}
 						<PollsLink />
 					{/if}
-					<hr class="border border-transparent" />
 					{#if !user}
 						<div class="flex flex-col gap-3">
 							<SignupLink />

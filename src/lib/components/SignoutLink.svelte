@@ -1,8 +1,8 @@
-<form method="POST" class="px-3 w-full font-medium">
+<form method="POST" class="px-2 w-full font-medium">
 	<button
 		formaction="/?/logout"
 		type="submit"
-		class="outline-none w-full transition focus-visible:text-primary-700 flex flex-row items-center gap-2 hover:text-primary-700"
+		class="outline-none w-full transition focus-visible:text-primary-700 flex flex-row items-center gap-1 hover:text-primary-700"
 	>
 		<svg
 			class="w-5 h-5"
