@@ -21,19 +21,21 @@
 </script>
 
 <div class="mx-auto max-w-5xl">
-	<Select
-		on:change={(e) => {
-			console.log('change', e.detail);
-			if (e.detail !== status) {
-				goto(`/poll?status=${e.detail}`);
-			}
-		}}
-		value={status}
-		id="status"
-		name="status"
-		className="bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
-		items={statusOptions}
-	/>
+	{#if statusOptions.find((s) => s.value === status)}
+		<Select
+			on:change={(e) => {
+				console.log('change', e.detail);
+				if (e.detail !== status) {
+					goto(`/poll?status=${e.detail}`);
+				}
+			}}
+			value={status}
+			id="status"
+			name="status"
+			className="bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
+			items={statusOptions}
+		/>
+	{/if}
 	{#if polls?.length}
 		<table class="w-full table-auto">
 			<thead class="font-semibold [&>td]:py-2 [&>td]:text-surface-100">
