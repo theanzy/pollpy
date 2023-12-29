@@ -1,7 +1,7 @@
 <script lang="ts">
 	import createPopperAction from '$lib/popover';
 	import { cn } from '$lib/utils';
-	import type { ComponentType } from 'svelte';
+	import { createEventDispatcher, type ComponentType } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
@@ -11,6 +11,7 @@
 	export let items: { icon?: ComponentType; label: string; value: string }[];
 	export let className: string = '';
 	export let value: string = items[0]?.value ?? '';
+	const dispatch = createEventDispatcher<{ change: string }>();
 
 	let expanded = false;
 	$: selectedItem = items.find((i) => i.value === value);
@@ -120,7 +121,7 @@
 			duration: 200
 		}}
 		on:keydown={handleKeySelect}
-		class="bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
+		class="z-10 bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
 	>
 		{#each items as item (item.value)}
 			{@const selected = value === item.value}
@@ -131,11 +132,13 @@
 				on:keydown={(e) => {
 					if (e.key === 'Enter') {
 						value = item.value;
+						dispatch('change', value);
 						expanded = false;
 					}
 				}}
 				on:click={() => {
 					value = item.value;
+					dispatch('change', value);
 					expanded = false;
 				}}
 				aria-selected={selected}

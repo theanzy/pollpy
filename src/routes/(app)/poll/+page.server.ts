@@ -4,12 +4,18 @@ import { uuidToBase64 } from '$lib/server/utils.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 
-export async function load({ locals }) {
+export async function load({ locals, url }) {
 	const session = await locals.auth.validate();
 	if (!session?.user) {
 		throw redirect(301, '/');
 	}
-
+	const searchParams = url.searchParams;
+	let pollStatus = 'active';
+	const searchStatus = searchParams.get('status');
+	if (searchStatus) {
+		pollStatus = searchStatus;
+	}
+	console.log('pollStatus', pollStatus);
 	try {
 		const pollRes = await db
 			.select({
@@ -20,7 +26,7 @@ export async function load({ locals }) {
 				slug: sql<string>`${polls.id}`.mapWith((v) => uuidToBase64(v))
 			})
 			.from(polls)
-			.where(() => and(eq(polls.createdBy, session.user.userId), eq(polls.status, 'active')))
+			.where(() => and(eq(polls.createdBy, session.user.userId), eq(polls.status, pollStatus)))
 			.orderBy(polls.createdAt);
 		return {
 			polls: pollRes

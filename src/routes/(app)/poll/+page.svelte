@@ -1,13 +1,40 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import CreatePollButton from '$lib/components/CreatePollButton.svelte';
+	import Select from '$lib/components/Select.svelte';
 
 	export let data;
+	const statusOptions = [
+		{
+			label: 'Active',
+			value: 'active'
+		},
+		{
+			label: 'Draft',
+			value: 'draft'
+		}
+	];
 	$: ({ polls } = data);
 	let checkedIds: string[] = [];
+	const status = $page.url.searchParams.get('status') ?? 'active';
 </script>
 
-{#if polls}
-	<div class="mx-auto max-w-5xl">
+<div class="mx-auto max-w-5xl">
+	<Select
+		on:change={(e) => {
+			console.log('change', e.detail);
+			if (e.detail !== status) {
+				goto(`/poll?status=${e.detail}`);
+			}
+		}}
+		value={status}
+		id="status"
+		name="status"
+		className="bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
+		items={statusOptions}
+	/>
+	{#if polls?.length}
 		<table class="w-full table-auto">
 			<thead class="font-semibold [&>td]:py-2 [&>td]:text-surface-100">
 				<td class="px-3">
@@ -68,11 +95,11 @@
 				{/each}
 			</tbody>
 		</table>
-	</div>
-{:else}
-	<div class="text-center mt-5 flex flex-col items-center">
-		<h2 class="text-2xl font-semibold text-surface-100">No polls found</h2>
-		<p class="mt-1 text-surface-300 text-sm mb-5">You don't have any polls yet.</p>
-		<CreatePollButton />
-	</div>
-{/if}
+	{:else}
+		<div class="text-center mt-5 flex flex-col items-center">
+			<h2 class="text-2xl font-semibold text-surface-100">No polls found</h2>
+			<p class="mt-1 text-surface-300 text-sm mb-5">You don't have any {status ?? ''} polls yet.</p>
+			<CreatePollButton />
+		</div>
+	{/if}
+</div>
