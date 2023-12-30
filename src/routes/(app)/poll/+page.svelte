@@ -19,7 +19,7 @@
 	];
 	$: ({ polls } = data);
 	let checkedIds: string[] = [];
-	const status = $page.url.searchParams.get('status') ?? 'active';
+	$: status = $page.url.searchParams.get('status') ?? 'active';
 </script>
 
 <div class="mx-auto max-w-5xl">
@@ -36,7 +36,6 @@
 		{#if statusOptions.find((s) => s.value === status)}
 			<Select
 				on:change={(e) => {
-					console.log('change', e.detail);
 					if (e.detail !== status) {
 						goto(`/poll?status=${e.detail}`);
 					}
