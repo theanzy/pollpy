@@ -105,6 +105,13 @@ export const actions = {
 			}
 			const poll = existingPolls[0];
 
+			if (poll.identifyVoteBy === 'free user' && !session?.user) {
+				return fail(401, {
+					status: 'unauthorized',
+					error: 'Please sign in to vote'
+				});
+			}
+
 			let voterKey: string = '';
 			const identifyVoteBy = poll.identifyVoteBy;
 			if (identifyVoteBy === 'ip') {
