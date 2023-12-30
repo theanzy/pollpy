@@ -1,22 +1,25 @@
 <script lang="ts">
-	import { deletePollModalStore } from '$lib/modalStore';
+	import { deleteMultipleModalStore } from '$lib/modalStore';
 	import { clickOutside } from '$lib/clickoutside';
 	import Modal from './Modal.svelte';
 	import { deserialize } from '$app/forms';
 	import toast from 'svelte-french-toast';
 	import { goto } from '$app/navigation';
-	$: slug = $deletePollModalStore.params?.slug;
 	let loading = false;
 
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
 		e.preventDefault();
 
 		const form = e.currentTarget;
+		const ids = $deleteMultipleModalStore.params?.ids;
+		const body = new FormData();
+		body.set('ids', JSON.stringify(ids));
+		console.log('action', form.action);
 		try {
 			loading = true;
 			const response = await fetch(form.action, {
 				method: 'POST',
-				body: new FormData()
+				body: body
 			});
 			const result = deserialize(await response.text());
 			if (result.type === 'failure') {
@@ -27,15 +30,15 @@
 			}
 			if (result.type === 'success') {
 				form.reset();
-				toast.success('Poll deleted.');
+				toast.success('Polls deleted.');
 			}
 			goto('/');
 		} catch (error) {
-			console.log('delete poll error', error);
+			console.log('delete polls error', error);
 			if (error instanceof Error) {
 				toast.error(error.message);
 			} else {
-				toast.error('Fail to delete poll');
+				toast.error('Fail ot delete polls');
 			}
 		} finally {
 			loading = false;
@@ -43,10 +46,10 @@
 	}
 </script>
 
-<Modal bind:open={$deletePollModalStore.open} closeButton>
+<Modal bind:open={$deleteMultipleModalStore.open} closeButton>
 	<div
 		use:clickOutside={() => {
-			$deletePollModalStore.open = false;
+			$deleteMultipleModalStore.open = false;
 		}}
 	>
 		<h2 class="pt-4 px-5 font-medium flex flex-row gap-2 items-center text-lg">
@@ -66,19 +69,19 @@
 					/><circle cx="12" cy="16" r="1" fill="currentColor" /></g
 				>
 			</svg>
-			Delete Poll
+			Delete
 		</h2>
 		<hr class="border-b border-transparent border-b-surface-700 my-3" />
 		<div class="px-5 mt-2 text-surface-300">
 			<p>
-				Are you sure you want to delete this poll? All asociated data including votes, will be
+				Are you sure you want to delete these polls? All asociated data including votes, will be
 				removed. This action cannot be undone.
 			</p>
 		</div>
 		<hr class="border-b border-transparent my-2" />
 		<form
 			method="POST"
-			action="/{slug}/?/delete"
+			action="/?/batchDelete"
 			class="px-5 py-5 flex flex-col md:flex-row gap-3 md:gap-5"
 			on:submit={handleSubmit}
 		>
@@ -86,7 +89,7 @@
 				class="ml-auto w-full md:w-[150px] py-1 bg-surface-50 text-surface-950 font-medium outline-none hover:bg-primary-50 focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 ring-primary-600 rounded-sm"
 				type="button"
 				on:click={() => {
-					$deletePollModalStore.open = false;
+					$deleteMultipleModalStore.open = false;
 				}}>Cancel</button
 			>
 			<button

@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import CreatePollButton from '$lib/components/CreatePollButton.svelte';
 	import Select from '$lib/components/Select.svelte';
+	import TrashButton from '$lib/components/TrashButton.svelte';
+	import { deleteMultipleModalStore } from '$lib/modalStore.js';
 
 	export let data;
 	const statusOptions = [
@@ -21,21 +23,32 @@
 </script>
 
 <div class="mx-auto max-w-5xl">
-	{#if statusOptions.find((s) => s.value === status)}
-		<Select
-			on:change={(e) => {
-				console.log('change', e.detail);
-				if (e.detail !== status) {
-					goto(`/poll?status=${e.detail}`);
-				}
-			}}
-			value={status}
-			id="status"
-			name="status"
-			className="ml-auto bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
-			items={statusOptions}
-		/>
-	{/if}
+	<div class="flex flex-row items-center gap-2 mb-3 pl-1">
+		{#if checkedIds.length}
+			<TrashButton
+				on:click={() => {
+					deleteMultipleModalStore.openModal({
+						ids: checkedIds
+					});
+				}}
+			/>
+		{/if}
+		{#if statusOptions.find((s) => s.value === status)}
+			<Select
+				on:change={(e) => {
+					console.log('change', e.detail);
+					if (e.detail !== status) {
+						goto(`/poll?status=${e.detail}`);
+					}
+				}}
+				value={status}
+				id="status"
+				name="status"
+				className="ml-auto bg-transparent w-full md:w-[150px] border border-surface-700"
+				items={statusOptions}
+			/>
+		{/if}
+	</div>
 	{#if polls?.length}
 		<table class="w-full table-auto">
 			<thead class="font-semibold [&>td]:py-2 [&>td]:text-surface-100">

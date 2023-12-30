@@ -23,3 +23,5 @@ function createModalStore<ParamT>() {
 export const sharePollModalStore = createModalStore<{ link: string }>();
 
 export const deletePollModalStore = createModalStore<{ slug: string }>();
+
+export const deleteMultipleModalStore = createModalStore<{ ids: string[] }>();
