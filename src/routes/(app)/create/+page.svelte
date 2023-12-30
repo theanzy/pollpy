@@ -252,6 +252,27 @@
 	>
 		Add Answer
 	</button>
+	<hr class="my-6 border-b border-surface-700" />
+	<h2 class="font-semibold mb-2">Settings</h2>
+	<label class="mb-1" for="identifyVoteBy">Identify Vote by</label>
+	<Select
+		id="identifyVoteBy"
+		name="identifyVoteBy"
+		items={[
+			{
+				label: 'One vote per browser session',
+				value: 'cookie session'
+			},
+			{
+				label: 'One vote per IP address',
+				value: 'ip'
+			},
+			{
+				label: 'One vote per pollpy account',
+				value: 'free user'
+			}
+		]}
+	/>
 	<hr class="my-6 border-transparent" />
 	<div class="flex md:flex-row flex-col gap-5">
 		<button

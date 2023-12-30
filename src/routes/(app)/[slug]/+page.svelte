@@ -216,17 +216,17 @@
 	</div>
 
 	<hr class="my-2 border border-transparent" />
-	<div class="flex flex-row gap-1 items-center justify-center text-surface-300">
-		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-			<path
-				fill="currentColor"
-				d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"
-			/>
-		</svg>
-		{#if poll.identifyVoteBy === 'cookie session'}
+	{#if poll.identifyVoteBy === 'cookie session'}
+		<div class="flex flex-row gap-1 items-center justify-center text-surface-300">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+				<path
+					fill="currentColor"
+					d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"
+				/>
+			</svg>
 			One vote per browser session allowed.
-		{/if}
-	</div>
+		</div>
+	{/if}
 {:else}
 	<div class="mt-10 text-center">
 		<h2 class="font-semibold text-2xl text-surface-50 mb-2">Page not found</h2>

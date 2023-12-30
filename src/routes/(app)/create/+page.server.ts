@@ -126,7 +126,7 @@ async function insertPoll(data: InsertPollRequest, creatorId: string) {
 				title: data.title,
 				maxChoice: data.maxChoice,
 				type: data.type,
-				identifyVoteBy: 'cookie session',
+				identifyVoteBy: data.identifyVoteBy,
 				image: data.image,
 				createdBy: creatorId,
 				status: data.status

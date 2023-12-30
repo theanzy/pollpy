@@ -39,8 +39,11 @@ export const insertPollSchema = createInsertSchema(polls, {
 			.optional(),
 	type: (schema) => schema.type.min(1, 'type is required').max(256, 'type is too long'),
 	maxChoice: (schema) => schema.maxChoice.min(1, 'maxChoice is too low. minimum is 1'),
-	identifyVoteBy: (schema) =>
-		schema.identifyVoteBy.min(1, 'maxChoice is too low. minimum is 1').optional(),
+	identifyVoteBy: () =>
+		z.enum(['ip', 'cookie session', 'free user'], {
+			invalid_type_error: 'identifyVoteBy is not valid',
+			required_error: 'identifyVoteBy is required'
+		}),
 	createdBy: (schema) => schema.createdBy.optional(),
 	createdAt: (schema) => schema.createdAt.optional(),
 	status: (schema) => schema.status.optional()
