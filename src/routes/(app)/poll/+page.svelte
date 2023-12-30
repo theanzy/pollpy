@@ -32,7 +32,7 @@
 			value={status}
 			id="status"
 			name="status"
-			className="bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
+			className="ml-auto bg-transparent w-full md:w-[150px] border border-surface-700 mb-3"
 			items={statusOptions}
 		/>
 	{/if}
