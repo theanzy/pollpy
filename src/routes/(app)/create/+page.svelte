@@ -3,7 +3,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import toast from 'svelte-french-toast';
 	import SaveAsDraftButton from '$lib/components/SaveAsDraftButton.svelte';
-	import VotePollForm, { type VotePollFormEvent } from '$lib/components/VotePollForm.svelte';
+	import PollForm, { type PollFormEvent } from '$lib/components/PollForm.svelte';
 
 	export let data;
 	$: ({ user } = data);
@@ -12,7 +12,7 @@
 	let formaction = '';
 
 	// use submit event
-	async function handleSubmit(e: { detail: VotePollFormEvent['submit'] }) {
+	async function handleSubmit(e: { detail: PollFormEvent['submit'] }) {
 		formaction = e.detail.formaction;
 		try {
 			loading = true;
@@ -22,7 +22,7 @@
 			});
 			const result = deserialize(await response.text());
 			if (result.type === 'success') {
-				e.detail.resetForm();
+				e.detail.resetForm?.();
 				// rerun all `load` functions, following the successful update
 				toast.success('Poll created');
 				await invalidateAll();
@@ -45,27 +45,29 @@
 	}
 </script>
 
-<h2 class="text-2xl font-bold text-surface-50 max-w-3xl mx-auto">Create a poll</h2>
-<p class="text-surface-300 mt-1 mb-5 max-w-3xl mx-auto">Fill up the fields below</p>
-<VotePollForm on:submit={handleSubmit}>
-	<svelte:fragment slot="actions">
-		<button
-			disabled={loading}
-			formaction="?/add"
-			type="submit"
-			class="w-full md:w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
-		>
-			{#if loading && formaction === '/create?/add'}
-				Creating...
-			{:else}
-				Create poll
-			{/if}
-		</button>
-		<SaveAsDraftButton
-			class="w-full md:w-[150px]"
-			disabled={loading}
-			loading={loading && formaction === '/create?/draft'}
-			{user}
-		/>
-	</svelte:fragment>
-</VotePollForm>
+<div class="max-w-3xl mx-auto">
+	<h2 class="text-2xl font-bold text-surface-50 mx-auto">Create a poll</h2>
+	<p class="text-surface-300 mt-1 mb-5 mx-auto">Fill up the fields below</p>
+	<PollForm on:submit={handleSubmit}>
+		<svelte:fragment slot="actions">
+			<button
+				disabled={loading}
+				formaction="?/add"
+				type="submit"
+				class="w-full md:w-[150px] py-2 rounded-sm font-medium text-surface-50 bg-primary-700 outline-none transition focus-visible:ring-1 disabled:opacity-50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950 focus-visible:ring-primary-700 enabled:hover:text-white enabled:hover:bg-primary-600"
+			>
+				{#if loading && formaction === '/create?/add'}
+					Creating...
+				{:else}
+					Create poll
+				{/if}
+			</button>
+			<SaveAsDraftButton
+				class="w-full md:w-[150px]"
+				disabled={loading}
+				loading={loading && formaction === '/create?/draft'}
+				{user}
+			/>
+		</svelte:fragment>
+	</PollForm>
+</div>

@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-	export type VotePollFormEvent = {
+	export type PollFormEvent = {
 		submit: {
 			data: FormData;
 			formaction: string;
-			resetForm: () => void;
+			resetForm?: () => void;
 		};
 	};
 </script>
@@ -20,6 +20,9 @@
 	import Select from './Select.svelte';
 	import XButton from './XButton.svelte';
 	import { page } from '$app/stores';
+	import type { PollWithAnswers } from '$lib/server/schema/poll';
+
+	export let initialData: PollWithAnswers | null = null;
 
 	let answers: {
 		id: string;
@@ -33,6 +36,9 @@
 			label: ''
 		}
 	];
+	$: {
+		answers = (initialData?.answers as any) ?? [];
+	}
 
 	const pollTypes = [
 		{
@@ -46,22 +52,14 @@
 			icon: PictureIcon
 		}
 	] as const;
-	let pollType: (typeof pollTypes)[number]['value'];
-
-	$: {
-		if (pollType) {
-			answers = [
-				{
-					id: Math.random().toString(16).slice(2),
-					label: ''
-				}
-			];
-		}
-	}
+	let pollType: (typeof pollTypes)[number]['value'] = initialData?.type as any;
 
 	let pollImage: string | undefined = undefined;
+	$: {
+		pollImage = initialData?.image || undefined;
+	}
 
-	const dispatch = createEventDispatcher<VotePollFormEvent>();
+	const dispatch = createEventDispatcher<PollFormEvent>();
 
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
 		e.preventDefault();
@@ -114,11 +112,12 @@
 <form
 	on:submit={handleSubmit}
 	method="POST"
-	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-3 md:px-8 py-4 md:py-6 max-w-3xl mx-auto"
+	class="border border-surface-700 bg-surface-800 rounded flex flex-col px-3 md:px-8 py-4 md:py-6"
 >
 	<label for="title" class="font-medium mb-1">Title</label>
 	<div class="relative">
 		<Input
+			value={initialData?.title || undefined}
 			id="title"
 			name="title"
 			placeholder="Your question..."
@@ -146,23 +145,39 @@
 			<img alt="poll" class="max-h-[300px] w-auto mx-auto" src={pollImage} />
 		</div>
 	{/if}
-	<label for="description" class="font-medium mt-5 mb-1"
-		>Description <span class="text-surface-400">(optional)</span></label
-	>
+	<label for="description" class="font-medium mt-5 mb-1">
+		Description <span class="text-surface-400">(optional)</span>
+	</label>
 	<textarea
+		value={initialData?.description ?? ''}
 		id="description"
 		name="description"
-		class="rounded-sm bg-surface-700 text-surface-100 px-2 py-1 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400"
+		class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400"
 	/>
 	<hr class="my-6 border-b border-surface-700" />
 	<div class="mb-3 w-full md:w-[50%]">
 		<label for="type" class="font-medium mb-1">Poll type</label>
-		<Select id="type" name="type" className="w-full" bind:value={pollType} items={[...pollTypes]} />
+		<Select
+			id="type"
+			name="type"
+			className="w-full"
+			bind:value={pollType}
+			items={[...pollTypes]}
+			on:change={() => {
+				answers = [
+					{
+						id: Math.random().toString(16).slice(2),
+						label: ''
+					}
+				];
+			}}
+		/>
 	</div>
 	<label for="maxChoice" class="font-medium mb-1">Maximum Choices</label>
 	<Input
 		type="number"
 		min={1}
+		value={initialData?.maxChoice}
 		max={answers.length}
 		id="maxChoice"
 		name="maxChoice"
@@ -235,6 +250,7 @@
 	<Select
 		id="identifyVoteBy"
 		name="identifyVoteBy"
+		value={initialData?.identifyVoteBy}
 		items={[
 			{
 				label: 'One vote per browser session',

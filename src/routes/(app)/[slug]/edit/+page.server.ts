@@ -14,6 +14,8 @@ export async function load({ params, locals, cookies, depends }) {
 			.select({
 				id: polls.id,
 				title: polls.title,
+				image: polls.image,
+				description: polls.description,
 				type: polls.type,
 				createdBy: polls.createdBy,
 				creatorName: users.username,

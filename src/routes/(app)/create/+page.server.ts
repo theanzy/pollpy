@@ -124,6 +124,7 @@ async function insertPoll(data: InsertPollRequest, creatorId: string) {
 			.insert(polls)
 			.values({
 				title: data.title,
+				description: data.description,
 				maxChoice: data.maxChoice,
 				type: data.type,
 				identifyVoteBy: data.identifyVoteBy,

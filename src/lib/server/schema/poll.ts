@@ -12,6 +12,7 @@ export const polls = mySchema.table('polls', {
 	title: varchar('title', {
 		length: 256
 	}).notNull(),
+	description: text('description'),
 	image: text('image'),
 	type: varchar('type', {
 		length: 256
