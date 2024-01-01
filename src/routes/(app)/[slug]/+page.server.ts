@@ -13,6 +13,8 @@ export async function load({ params, locals, cookies, depends }) {
 		const res = await db
 			.select({
 				id: polls.id,
+				description: polls.description,
+				image: polls.image,
 				title: polls.title,
 				type: polls.type,
 				createdBy: polls.createdBy,

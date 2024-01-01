@@ -93,10 +93,22 @@
 					>
 				{/if}
 			</div>
-			<p>
+			<p class="text-sm text-surface-300">
 				by {poll.creatorName} <span class="mx-1">·</span>
 				{dateMoment(poll.createdAt, new Date())}
 			</p>
+			{#if poll.description}
+				<p class="mt-1 text-sm text-surface-100">{poll.description}</p>
+			{/if}
+			{#if poll.image && poll.image.startsWith('https://')}
+				<div class="w-full rounded p-1">
+					<img
+						alt="poll description"
+						src={poll.image}
+						class="mx-auto w-auto h-[150px] object-cover"
+					/>
+				</div>
+			{/if}
 			<hr class="my-2 border border-transparent" />
 			<p class="mb-2 text-sm">You can choose at most {poll.maxChoice} answers:</p>
 			{#if poll.type === 'text'}
