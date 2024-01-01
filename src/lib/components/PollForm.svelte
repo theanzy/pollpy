@@ -36,8 +36,8 @@
 			label: ''
 		}
 	];
-	$: {
-		answers = (initialData?.answers as any) ?? [];
+	$: if (initialData) {
+		answers = (initialData.answers as any) ?? [];
 	}
 
 	const pollTypes = [
@@ -55,8 +55,8 @@
 	let pollType: (typeof pollTypes)[number]['value'] = initialData?.type as any;
 
 	let pollImage: string | undefined = undefined;
-	$: {
-		pollImage = initialData?.image || undefined;
+	$: if (initialData) {
+		pollImage = initialData.image || undefined;
 	}
 
 	const dispatch = createEventDispatcher<PollFormEvent>();
