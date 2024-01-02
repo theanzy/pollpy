@@ -202,7 +202,9 @@
 							class="absolute top-1 right-1"
 							aria-label="remove answer"
 							on:click={() => {
-								answers = answers.filter((a) => a.id !== answer.id);
+								const idx = answers.findIndex((a) => a.id === answer.id);
+								answers.splice(idx, 1);
+								answers = answers;
 							}}
 						/>
 					{/if}
@@ -213,19 +215,20 @@
 								class="absolute top-2 right-2"
 								aria-label="remove answer"
 								on:click={() => {
-									answers = answers.filter((a) => a.id !== answer.id);
+									const idx = answers.findIndex((a) => a.id === answer.id);
+									answers.splice(idx, 1);
+									answers = answers;
 								}}
 							/>
 						{/if}
 						<ClickToUploadButton
-							bind:image={answer.image}
-							error={answer.error}
-							bind:focus={answer.focus}
+							bind:image={answers[idx].image}
+							bind:focus={answers[idx].focus}
+							error={answers[idx].error}
 						/>
 						<input
-							use:focus={idx === answers.length - 1}
 							bind:value={answers[idx].label}
-							name={`answers.text.${idx}`}
+							name={`answers.text.${answers[idx].id}`}
 							placeholder={`Label ${idx + 1}  (optional)`}
 							class="rounded-sm bg-surface-700 text-surface-100 px-3 py-2 outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface-900 placeholder:text-surface-400 w-full"
 						/>
