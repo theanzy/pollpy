@@ -47,7 +47,7 @@ export const insertPollSchema = createInsertSchema(polls, {
 		}),
 	createdBy: (schema) => schema.createdBy.optional(),
 	createdAt: (schema) => schema.createdAt.optional(),
-	status: (schema) => schema.status.optional()
+	status: () => z.enum(['active', 'draft']).optional()
 });
 
 export const answers = mySchema.table('answers', {
@@ -121,6 +121,8 @@ export const insertPollRequest = z
 	});
 
 export type InsertPollRequest = z.infer<typeof insertPollRequest>;
+export const updatePollRequest = insertPollRequest;
+export type UpdatePollRequest = z.infer<typeof updatePollRequest>;
 
 export const votes = mySchema.table(
 	'votes',

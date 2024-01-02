@@ -1,8 +1,16 @@
+import { fail } from '@sveltejs/kit';
+import { and, eq, isNull, lte, or } from 'drizzle-orm';
 import { db } from '$lib/server/drizzle.js';
-import { answers, polls, votes, type PollWithAnswers } from '$lib/server/schema/poll.js';
+
+import {
+	answers,
+	polls,
+	votes,
+	updatePollRequest,
+	type PollWithAnswers
+} from '$lib/server/schema/poll.js';
 import { users } from '$lib/server/schema/user.js';
 import { base64toUUID } from '$lib/server/utils.js';
-import { eq } from 'drizzle-orm';
 
 export async function load({ params, locals, cookies, depends }) {
 	depends('poll');
@@ -92,3 +100,153 @@ export async function load({ params, locals, cookies, depends }) {
 		};
 	}
 }
+
+export const actions = {
+	async edit({ locals, params, request }) {
+		try {
+			const session = await locals.auth.validate();
+
+			const user = session?.user;
+
+			// validation
+			// auth validation
+			if (!user) {
+				return fail(401, {
+					status: 'unauthorized',
+					error: 'Please sign in'
+				});
+			}
+
+			// input validation
+			const form = await request.formData();
+			const formdata = Object.fromEntries(form) as unknown as Record<string, string | number>;
+			formdata.answers = JSON.parse(formdata.answers as string);
+			formdata.maxChoice = parseInt(formdata.maxChoice as string);
+			const parsed = updatePollRequest.safeParse(formdata);
+			if (parsed.success === false) {
+				console.log('err', JSON.stringify(parsed.error, null, 2));
+				const errors = Object.entries(parsed.error.flatten().fieldErrors)
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					.map(([_, v]) => v?.[0])
+					.join('. ');
+				console.log('errors ', errors);
+				return fail(400, {
+					status: 'invalid',
+					error: errors
+				});
+			}
+
+			const pollId = base64toUUID(params.slug);
+
+			// poll validation
+			const existingPolls = await db
+				.select({ id: polls.id, createdBy: polls.createdBy, closed: polls.closedAt })
+				.from(polls)
+				.where(
+					and(eq(polls.id, pollId), or(isNull(polls.closedAt), lte(polls.closedAt, new Date())))
+				);
+			const poll = existingPolls?.[0];
+			if (!poll) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'Cannot edit this poll'
+				});
+			}
+
+			if (poll.createdBy !== user.userId) {
+				return fail(400, {
+					status: 'unauthorized',
+					error: 'Not allowed to edit this poll'
+				});
+			}
+			// check votes
+			const existingVotes = await db
+				.select({ id: votes.id })
+				.from(votes)
+				.where(eq(votes.pollId, poll.id));
+			if (existingVotes.length) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'This poll already has votes.'
+				});
+			}
+
+			// update
+			const data = parsed.data;
+			const res = await db.transaction(async (tx) => {
+				console.log('update iamge', data.image);
+				const updatedPoll = await tx
+					.update(polls)
+					.set({
+						title: data.title,
+						image: data.image || null,
+						description: data.description,
+						maxChoice: data.maxChoice,
+						type: data.type,
+						identifyVoteBy: data.identifyVoteBy
+					})
+					.where(eq(polls.id, poll.id))
+					.returning({
+						id: polls.id
+					});
+				if (!updatedPoll[0]?.id) {
+					tx.rollback();
+					return {
+						status: 'fail'
+					};
+				}
+
+				const oldAnswers = await tx
+					.delete(answers)
+					.where(eq(answers.pollId, poll.id))
+					.returning({ id: answers.id });
+
+				if (oldAnswers.length === 0) {
+					tx.rollback();
+					return {
+						status: 'fail'
+					};
+				}
+
+				const insertedAnswers = await tx
+					.insert(answers)
+					.values(
+						data.answers.map((answer) => {
+							return {
+								pollId: updatedPoll[0].id,
+								label: answer.label,
+								image: answer.image
+							};
+						})
+					)
+					.returning({ id: answers.id });
+
+				if (insertedAnswers.length !== data.answers.length) {
+					tx.rollback();
+					return {
+						status: 'fail'
+					};
+				}
+				return {
+					status: 'success',
+					pollId: updatedPoll[0]?.id
+				};
+			});
+
+			if (res.status === 'fail') {
+				return fail(400, {
+					status: 'error',
+					error: 'Cannot update poll'
+				});
+			}
+			return {
+				status: 'success'
+			};
+		} catch (error) {
+			console.log('edit poll error', error);
+			return fail(500, {
+				error: 'Something went wrong'
+			});
+		}
+	}
+};

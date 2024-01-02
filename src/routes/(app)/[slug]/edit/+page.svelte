@@ -1,10 +1,38 @@
 <script lang="ts">
+	import { deserialize } from '$app/forms';
+	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import PollForm from '$lib/components/PollForm.svelte';
+	import PollForm, { type PollFormEvent } from '$lib/components/PollForm.svelte';
+	import toast from 'svelte-french-toast';
 
 	export let data;
 	$: slug = $page.params.slug;
 	$: ({ poll, error } = data);
+	let loading = false;
+	async function handleSubmit(e: { detail: PollFormEvent['submit'] }) {
+		try {
+			loading = true;
+			const response = await fetch(e.detail.formaction, {
+				method: 'POST',
+				body: e.detail.data
+			});
+			const result = deserialize(await response.text());
+			if (result.type === 'success') {
+				// rerun all `load` functions, following the successful update
+				toast.success('Poll saved');
+				await invalidate('poll');
+			} else if (result.type === 'failure') {
+				if (result?.data?.error) {
+					toast.error(result.data?.error as string);
+				}
+			}
+		} catch (error) {
+			console.log('error create poll', error);
+			toast.error('Something went wrong');
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <div class="max-w-3xl mx-auto">
@@ -21,7 +49,7 @@
 			</a>
 		</div>
 	{:else}
-		<PollForm initialData={poll}>
+		<PollForm initialData={poll} on:submit={handleSubmit}>
 			<svelte:fragment slot="actions">
 				<button
 					class="font-medium px-4 py-2 w-full md:w-[150px] bg-primary-600 hover:bg-primary-700 hover:text-white text-surface-50 transition outline-none focus-visible:ring-1 ring-primary-600 ring-offset-2 ring-offset-surface-950 rounded-sm"
