@@ -20,6 +20,9 @@
 	import XButton from './XButton.svelte';
 	import { page } from '$app/stores';
 	import type { PollWithAnswers } from '$lib/server/schema/poll';
+	import ToggleBlock from './ToggleBlock.svelte';
+	import { slide } from 'svelte/transition';
+	import Checkbox from './Checkbox.svelte';
 
 	export let initialData: PollWithAnswers | null = null;
 
@@ -57,6 +60,21 @@
 	$: if (initialData) {
 		pollImage = initialData.image || undefined;
 	}
+
+	const resultVisibilityOptions = [
+		{
+			label: 'Always public',
+			value: 'always public'
+		},
+		{
+			label: 'Public after end date',
+			value: 'public after end date'
+		},
+		{
+			label: 'Public after vote',
+			value: 'public after vote'
+		}
+	];
 
 	const dispatch = createEventDispatcher<PollFormEvent>();
 
@@ -268,6 +286,70 @@
 			}
 		]}
 	/>
+	<hr class="my-4 border-transparent" />
+	<ToggleBlock>
+		<button
+			type="button"
+			slot="trigger"
+			let:toggle
+			let:open
+			on:click={toggle}
+			class="flex flex-row gap-2 items-center w-full text-left text-primary-700 transition enabled:hover:text-primary-600 focus-visible:text-primary-600 outline-none font-medium"
+		>
+			<svg
+				class="w-4 h-4 transition {open ? '-rotate-90' : 'rotate-0'}"
+				xmlns="http://www.w3.org/2000/svg"
+				width="256"
+				height="256"
+				viewBox="0 0 256 256"
+				><path
+					fill="currentColor"
+					d="m216.49 104.49l-80 80a12 12 0 0 1-17 0l-80-80a12 12 0 0 1 17-17L128 159l71.51-71.52a12 12 0 0 1 17 17Z"
+				/></svg
+			>
+			Show advanded settings
+		</button>
+		<div
+			transition:slide
+			slot="content"
+			class="py-3 flex flex-col md:flex-row w-full gap-4 divide-x divide-surface-700"
+		>
+			<div class="flex flex-col gap-4 md:flex-1 pr-3 text-surface-100">
+				<div class="flex flex-col gap-4">
+					<ToggleBlock let:open>
+						<div
+							slot="trigger"
+							let:toggle={toggleClosedDate}
+							class="flex flex-row justify-between items-center"
+						>
+							<label for="closedDate">Close poll on a scheduled date</label>
+							<Checkbox id="closedDate" name="closedDate" on:change={toggleClosedDate} />
+						</div>
+						<div slot="content">
+							<input
+								type="datetime-local"
+								required={open}
+								class="px-2 py-2 text-sm outline-none transition focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 bg-surface-700 rounded ring-primary-700 before:text-white after:text-white w-full"
+							/>
+						</div>
+					</ToggleBlock>
+					<div class="flex flex-row justify-between">
+						<label for="hideShareButton">Hide share button</label>
+						<Checkbox id="hideShareButton" name="hideShareButton" />
+					</div>
+				</div>
+			</div>
+			<div class="md:flex-1 pl-3">
+				<label for="resultVisibility" class="mb-1">Result visibility</label>
+				<Select
+					id="resultVisibility"
+					name="resultVisibility"
+					className="w-full"
+					items={resultVisibilityOptions}
+				/>
+			</div>
+		</div>
+	</ToggleBlock>
 	<hr class="my-6 border-transparent" />
 	<div class="flex md:flex-row flex-col gap-5">
 		<slot name="actions" />
