@@ -11,7 +11,6 @@
 <script lang="ts">
 	import CheckmarkIcon from '$lib/components/icons/Checkmark.svelte';
 	import PictureIcon from '$lib/components/icons/Picture.svelte';
-	import { focus } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
 	import ClickToUploadButton from './ClickToUploadButton.svelte';
 	import FileUploadTrigger from './FileUploadTrigger.svelte';

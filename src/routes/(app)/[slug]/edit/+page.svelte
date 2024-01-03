@@ -52,10 +52,15 @@
 		<PollForm initialData={poll} on:submit={handleSubmit}>
 			<svelte:fragment slot="actions">
 				<button
-					class="font-medium px-4 py-2 w-full md:w-[150px] bg-primary-600 hover:bg-primary-700 hover:text-white text-surface-50 transition outline-none focus-visible:ring-1 ring-primary-600 ring-offset-2 ring-offset-surface-950 rounded-sm"
+					disabled={loading}
+					class="disabled:opacity-50 font-medium px-4 py-2 w-full md:w-[150px] bg-primary-600 enabled:hover:bg-primary-700 enabled:hover:text-white text-surface-50 transition outline-none focus-visible:ring-1 ring-primary-600 ring-offset-2 ring-offset-surface-950 rounded-sm"
 					formaction="?/edit"
 				>
-					Save
+					{#if loading}
+						Saving...
+					{:else}
+						Save
+					{/if}
 				</button>
 			</svelte:fragment>
 		</PollForm>
