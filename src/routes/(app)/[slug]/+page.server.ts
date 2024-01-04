@@ -3,6 +3,7 @@ import { answers, polls, votes, type PollWithAnswers } from '$lib/server/schema/
 import { users } from '$lib/server/schema/user.js';
 import { base64toUUID, sha256 } from '$lib/server/utils.js';
 import { fail } from '@sveltejs/kit';
+import { differenceInSeconds } from 'date-fns';
 import { and, eq, inArray } from 'drizzle-orm';
 
 export async function load({ params, locals, cookies, depends }) {
@@ -23,7 +24,8 @@ export async function load({ params, locals, cookies, depends }) {
 				maxChoice: polls.maxChoice,
 				identifyVoteBy: polls.identifyVoteBy,
 				status: polls.status,
-				answer: answers
+				answer: answers,
+				closedAt: polls.closedAt
 			})
 			.from(polls)
 			.leftJoin(users, eq(users.id, polls.createdBy))
@@ -93,7 +95,8 @@ export const actions = {
 				.select({
 					id: polls.id,
 					identifyVoteBy: polls.identifyVoteBy,
-					maxChoice: polls.maxChoice
+					maxChoice: polls.maxChoice,
+					closedAt: polls.closedAt
 				})
 				.from(polls)
 				.innerJoin(answers, eq(answers.pollId, polls.id))
@@ -114,6 +117,13 @@ export const actions = {
 				});
 			}
 
+			// check poll closed
+			if (poll.closedAt && differenceInSeconds(poll.closedAt, new Date()) < 0) {
+				return fail(401, {
+					status: 'invalid',
+					error: 'This poll is already closed'
+				});
+			}
 			let voterKey: string = '';
 			const identifyVoteBy = poll.identifyVoteBy;
 			if (identifyVoteBy === 'ip') {

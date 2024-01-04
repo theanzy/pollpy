@@ -6,6 +6,7 @@
 	import MoreOptionsButton from '$lib/components/MoreOptionsButton.svelte';
 	import ShareVoteButton from '$lib/components/SharePollButton.svelte';
 	import { dateMoment } from '$lib/utils';
+	import { differenceInSeconds } from 'date-fns';
 	import toast from 'svelte-french-toast';
 
 	// your script goes here
@@ -157,6 +158,10 @@
 						</div>
 					{/each}
 				</fieldset>
+			{/if}
+			{#if poll.closedAt && differenceInSeconds(poll.closedAt, new Date()) < 0}
+				<hr class="my-2 border border-transparent" />
+				<p class="text-center text-sm text-amber-500">This poll is already closed.</p>
 			{/if}
 			{#if poll.status === 'active'}
 				<hr class="my-3 border border-transparent" />
