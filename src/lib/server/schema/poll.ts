@@ -47,6 +47,7 @@ export const insertPollSchema = createInsertSchema(polls, {
 		}),
 	createdBy: (schema) => schema.createdBy.optional(),
 	createdAt: (schema) => schema.createdAt.optional(),
+	closedAt: (schema) => schema.closedAt.optional(),
 	status: () => z.enum(['active', 'draft']).optional()
 });
 

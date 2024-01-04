@@ -7,6 +7,6 @@
 
 <slot {open} />
 <slot name="trigger" {open} {toggle} />
-{#if open}
-	<slot name="content" />
-{/if}
+<div class={open ? '' : 'hidden'}>
+	<slot name="content" isOpen={open} />
+</div>

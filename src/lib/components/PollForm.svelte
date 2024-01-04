@@ -21,8 +21,8 @@
 	import { page } from '$app/stores';
 	import type { PollWithAnswers } from '$lib/server/schema/poll';
 	import ToggleBlock from './ToggleBlock.svelte';
-	import { slide } from 'svelte/transition';
 	import Checkbox from './Checkbox.svelte';
+	import DateTimePicker from './DateTimePicker.svelte';
 
 	export let initialData: PollWithAnswers | null = null;
 
@@ -80,6 +80,7 @@
 
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
 		e.preventDefault();
+		console.log('submit');
 		const { submitter } = e as unknown as { submitter: HTMLButtonElement };
 		e.currentTarget.action = submitter.formAction;
 		let formaction = e.currentTarget.action.replace($page.url.origin, '');
@@ -310,27 +311,22 @@
 			Show advanded settings
 		</button>
 		<div
-			transition:slide
 			slot="content"
 			class="py-3 flex flex-col md:flex-row w-full gap-4 divide-x divide-surface-700"
 		>
 			<div class="flex flex-col gap-4 md:flex-1 pr-3 text-surface-100">
 				<div class="flex flex-col gap-4">
-					<ToggleBlock let:open>
+					<ToggleBlock>
 						<div
 							slot="trigger"
 							let:toggle={toggleClosedDate}
 							class="flex flex-row justify-between items-center"
 						>
 							<label for="closedDate">Close poll on a scheduled date</label>
-							<Checkbox id="closedDate" name="closedDate" on:change={toggleClosedDate} />
+							<Checkbox on:change={toggleClosedDate} />
 						</div>
-						<div slot="content">
-							<input
-								type="datetime-local"
-								required={open}
-								class="px-2 py-2 text-sm outline-none transition focus-visible:ring-1 ring-offset-2 ring-offset-surface-950 bg-surface-700 rounded ring-primary-700 before:text-white after:text-white w-full"
-							/>
+						<div slot="content" let:isOpen>
+							<DateTimePicker id="closedAt" name="closedAt" required={isOpen} />
 						</div>
 					</ToggleBlock>
 					<div class="flex flex-row justify-between">

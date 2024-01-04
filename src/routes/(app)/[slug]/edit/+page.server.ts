@@ -11,6 +11,7 @@ import {
 } from '$lib/server/schema/poll.js';
 import { users } from '$lib/server/schema/user.js';
 import { base64toUUID } from '$lib/server/utils.js';
+import { parseISO } from 'date-fns';
 
 export async function load({ params, locals, cookies, depends }) {
 	depends('poll');
@@ -119,9 +120,16 @@ export const actions = {
 
 			// input validation
 			const form = await request.formData();
-			const formdata = Object.fromEntries(form) as unknown as Record<string, string | number>;
+			const formdata = Object.fromEntries(form) as unknown as Record<
+				string,
+				string | number | Date
+			>;
 			formdata.answers = JSON.parse(formdata.answers as string);
 			formdata.maxChoice = parseInt(formdata.maxChoice as string);
+			if (formdata.closedAt) {
+				formdata.closedAt = parseISO(formdata.closedAt as string);
+			}
+
 			const parsed = updatePollRequest.safeParse(formdata);
 			if (parsed.success === false) {
 				console.log('err', JSON.stringify(parsed.error, null, 2));
@@ -183,7 +191,8 @@ export const actions = {
 						description: data.description,
 						maxChoice: data.maxChoice,
 						type: data.type,
-						identifyVoteBy: data.identifyVoteBy
+						identifyVoteBy: data.identifyVoteBy,
+						closedAt: data.closedAt
 					})
 					.where(eq(polls.id, poll.id))
 					.returning({
