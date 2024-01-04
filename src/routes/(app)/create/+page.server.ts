@@ -2,6 +2,7 @@ import { db } from '$lib/server/drizzle';
 import { answers, insertPollRequest, polls, type InsertPollRequest } from '$lib/server/schema/poll';
 import { uuidToBase64 } from '$lib/server/utils';
 import { fail, type Actions } from '@sveltejs/kit';
+import { parseISO } from 'date-fns';
 
 export const load = async ({ locals }) => {
 	const session = await locals.auth.validate();
@@ -16,9 +17,19 @@ export const actions: Actions = {
 		// if no session use browser session
 		const formdata = await request.formData();
 		console.log('formdata...', formdata);
-		const data = Object.fromEntries(formdata) as unknown as Record<string, string | number>;
+		const data = Object.fromEntries(formdata) as unknown as Record<
+			string,
+			string | number | Date | undefined
+		>;
 		data.answers = JSON.parse(data.answers as string);
 		data.maxChoice = parseInt(data.maxChoice as string);
+
+		if (data.closedAt) {
+			data.closedAt = parseISO(data.closedAt as string);
+		} else {
+			data.closedAt = undefined;
+		}
+
 		console.log('data', data);
 		const parsed = insertPollRequest.safeParse(data);
 		console.log('parsed', parsed);
@@ -75,9 +86,17 @@ export const actions: Actions = {
 
 			// input
 			const formdata = await request.formData();
-			const data = Object.fromEntries(formdata) as unknown as Record<string, string | number>;
+			const data = Object.fromEntries(formdata) as unknown as Record<
+				string,
+				string | number | Date | undefined
+			>;
 			data.answers = JSON.parse(data.answers as string);
 			data.maxChoice = parseInt(data.maxChoice as string);
+			if (data.closedAt) {
+				data.closedAt = parseISO(data.closedAt as string);
+			} else {
+				data.closedAt = undefined;
+			}
 
 			// validation
 			const parsed = insertPollRequest.safeParse(data);
@@ -130,7 +149,8 @@ async function insertPoll(data: InsertPollRequest, creatorId: string) {
 				identifyVoteBy: data.identifyVoteBy,
 				image: data.image,
 				createdBy: creatorId,
-				status: data.status
+				status: data.status,
+				closedAt: data.closedAt
 			})
 			.returning({
 				id: polls.id

@@ -324,8 +324,8 @@
 							class="flex flex-row justify-between items-center"
 							let:isOpen
 						>
-							<label for="closedDate">Close poll on a scheduled date</label>
-							<Checkbox isChecked={isOpen} on:change={toggleClosedDate} />
+							<p>Close poll on a scheduled date</p>
+							<Checkbox id="toggleClosedDate" isChecked={isOpen} on:change={toggleClosedDate} />
 						</div>
 						<div slot="content" let:isOpen>
 							<DateTimePicker

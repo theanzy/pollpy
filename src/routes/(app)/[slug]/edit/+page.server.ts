@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { and, eq, isNull, lte, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/drizzle.js';
 
 import {
@@ -153,9 +153,7 @@ export const actions = {
 			const existingPolls = await db
 				.select({ id: polls.id, createdBy: polls.createdBy, closedAt: polls.closedAt })
 				.from(polls)
-				.where(
-					and(eq(polls.id, pollId), or(isNull(polls.closedAt), lte(polls.closedAt, new Date())))
-				);
+				.where(eq(polls.id, pollId));
 			const poll = existingPolls?.[0];
 			if (!poll) {
 				return fail(400, {

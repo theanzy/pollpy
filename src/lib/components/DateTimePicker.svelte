@@ -67,7 +67,13 @@
 
 	let datetime: Date | null = null;
 	$: if (initialDate) {
-		selectedHour = initialDate.getDate();
+		const h = initialDate.getHours();
+		if (h > 12) {
+			selectedMeridiem = 'PM';
+		} else {
+			selectedMeridiem = 'AM';
+		}
+		selectedHour = h > 12 ? h - 12 : h;
 		selectedMinute = initialDate.getMinutes();
 		selectedDay = new Date(initialDate);
 	}
@@ -88,6 +94,16 @@
 
 	let pickerOpen = false;
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
+
+	function scrollToSelected(elem: HTMLButtonElement, isSelected: boolean) {
+		if (!isSelected) {
+			return;
+		}
+		elem.scrollIntoView({
+			inline: 'start',
+			block: 'start'
+		});
+	}
 
 	function toPrevious() {
 		if (selectMode === 'day') {
@@ -345,6 +361,7 @@
 						{#each hours.concat(hours) as h}
 							<button
 								type="button"
+								use:scrollToSelected={selectedHour === h}
 								on:click={(e) => {
 									selectedHour = h;
 									const parent = e.currentTarget.parentElement;
@@ -379,6 +396,7 @@
 					>
 						{#each minutes.concat(minutes) as m}
 							<button
+								use:scrollToSelected={selectedMinute === m}
 								on:click={(e) => {
 									selectedMinute = m;
 									const parent = e.currentTarget.parentElement;
