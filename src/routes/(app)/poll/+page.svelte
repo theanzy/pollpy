@@ -5,6 +5,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import TrashButton from '$lib/components/TrashButton.svelte';
 	import { deleteMultipleModalStore } from '$lib/modalStore.js';
+	import { format } from 'date-fns';
 
 	export let data;
 	const statusOptions = [
@@ -66,9 +67,10 @@
 						type="checkbox"
 					/>
 				</td>
-				<td class="w-[60%] px-3">Poll</td>
+				<td class="w-[40%] px-3">Poll</td>
 				<td class="px-3">Vote type</td>
 				<td class="px-3">Created At</td>
+				<td class="px-3">Closed At</td>
 			</thead>
 			<tbody>
 				{#each polls as poll (poll.id)}
@@ -102,8 +104,15 @@
 						</td>
 						<td>
 							<time datetime={poll.createdAt.toISOString()}>
-								{poll.createdAt.toLocaleString()}
+								{format(poll.createdAt, 'dd/MM/yyyy, KK:mm:ss a')}
 							</time>
+						</td>
+						<td>
+							{#if poll.closedAt}
+								<time datetime={poll.closedAt.toISOString()}>
+									{format(poll.closedAt, 'dd/MM/yyyy, KK:mm:ss a')}
+								</time>
+							{/if}
 						</td>
 					</tr>
 				{/each}

@@ -23,6 +23,7 @@ export async function load({ locals, url }) {
 				title: polls.title,
 				identifyVoteBy: polls.identifyVoteBy,
 				createdAt: polls.createdAt,
+				closedAt: polls.closedAt,
 				slug: sql<string>`${polls.id}`.mapWith((v) => uuidToBase64(v))
 			})
 			.from(polls)
