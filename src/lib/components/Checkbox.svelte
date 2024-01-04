@@ -4,6 +4,7 @@
 	// your script goes here
 	export let name: string | undefined = undefined;
 	export let id: string | undefined = undefined;
+	export let isChecked: boolean | undefined = undefined;
 	const dispatch = createEventDispatcher<{
 		change: boolean;
 	}>();
@@ -17,6 +18,7 @@
 		width="0"
 		height="0"
 		class="absolute peer/checkbox opacity-0 top-3"
+		bind:checked={isChecked}
 		on:change={(e) => {
 			dispatch('change', e.currentTarget.checked);
 		}}

@@ -21,6 +21,7 @@
 	export let required = false;
 	export let id: string | undefined = undefined;
 	export let name: string | undefined = undefined;
+	export let initialDate: Date | undefined = undefined;
 
 	let selectMode: SelectMode = 'day';
 	let now = new Date();
@@ -65,6 +66,11 @@
 	let selectedMeridiem = 'AM';
 
 	let datetime: Date | null = null;
+	$: if (initialDate) {
+		selectedHour = initialDate.getDate();
+		selectedMinute = initialDate.getMinutes();
+		selectedDay = new Date(initialDate);
+	}
 
 	$: if (!required) {
 		datetime = null;

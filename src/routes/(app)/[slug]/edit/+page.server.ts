@@ -11,7 +11,7 @@ import {
 } from '$lib/server/schema/poll.js';
 import { users } from '$lib/server/schema/user.js';
 import { base64toUUID } from '$lib/server/utils.js';
-import { parseISO } from 'date-fns';
+import { differenceInSeconds, parseISO } from 'date-fns';
 
 export async function load({ params, locals, cookies, depends }) {
 	depends('poll');
@@ -32,6 +32,7 @@ export async function load({ params, locals, cookies, depends }) {
 				maxChoice: polls.maxChoice,
 				identifyVoteBy: polls.identifyVoteBy,
 				status: polls.status,
+				closedAt: polls.closedAt,
 				answer: answers
 			})
 			.from(polls)
@@ -122,12 +123,14 @@ export const actions = {
 			const form = await request.formData();
 			const formdata = Object.fromEntries(form) as unknown as Record<
 				string,
-				string | number | Date
+				string | number | Date | undefined
 			>;
 			formdata.answers = JSON.parse(formdata.answers as string);
 			formdata.maxChoice = parseInt(formdata.maxChoice as string);
 			if (formdata.closedAt) {
 				formdata.closedAt = parseISO(formdata.closedAt as string);
+			} else {
+				formdata.closedAt = undefined;
 			}
 
 			const parsed = updatePollRequest.safeParse(formdata);
@@ -148,7 +151,7 @@ export const actions = {
 
 			// poll validation
 			const existingPolls = await db
-				.select({ id: polls.id, createdBy: polls.createdBy, closed: polls.closedAt })
+				.select({ id: polls.id, createdBy: polls.createdBy, closedAt: polls.closedAt })
 				.from(polls)
 				.where(
 					and(eq(polls.id, pollId), or(isNull(polls.closedAt), lte(polls.closedAt, new Date())))
@@ -167,6 +170,14 @@ export const actions = {
 					error: 'Not allowed to edit this poll'
 				});
 			}
+
+			if (poll.closedAt && differenceInSeconds(poll.closedAt, new Date()) < 0) {
+				return fail(400, {
+					status: 'invalid',
+					error: 'Cannot edit a closed poll'
+				});
+			}
+
 			// check votes
 			const existingVotes = await db
 				.select({ id: votes.id })

@@ -125,6 +125,7 @@
 			}
 		});
 	}
+	$: console.log('initialdata', initialData);
 </script>
 
 <form
@@ -316,17 +317,23 @@
 		>
 			<div class="flex flex-col gap-4 md:flex-1 pr-3 text-surface-100">
 				<div class="flex flex-col gap-4">
-					<ToggleBlock>
+					<ToggleBlock open={initialData?.closedAt !== null}>
 						<div
 							slot="trigger"
 							let:toggle={toggleClosedDate}
 							class="flex flex-row justify-between items-center"
+							let:isOpen
 						>
 							<label for="closedDate">Close poll on a scheduled date</label>
-							<Checkbox on:change={toggleClosedDate} />
+							<Checkbox isChecked={isOpen} on:change={toggleClosedDate} />
 						</div>
 						<div slot="content" let:isOpen>
-							<DateTimePicker id="closedAt" name="closedAt" required={isOpen} />
+							<DateTimePicker
+								id="closedAt"
+								name="closedAt"
+								required={isOpen}
+								initialDate={initialData?.closedAt || undefined}
+							/>
 						</div>
 					</ToggleBlock>
 					<div class="flex flex-row justify-between">
