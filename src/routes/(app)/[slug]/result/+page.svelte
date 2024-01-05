@@ -18,8 +18,8 @@
 				{dateMoment(pollResult.poll.createdAt, new Date())}
 			</p>
 			{#if !pollResult.isVisible}
-				<p class="text-amber-500 text-center mt-4 text-sm">
-					The result for this poll is not available at the moment
+				<p class="text-amber-500 mt-4 text-sm">
+					The result for this poll is not available at the moment.
 				</p>
 			{/if}
 			<p></p>

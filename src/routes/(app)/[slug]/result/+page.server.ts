@@ -4,6 +4,7 @@ import { db } from '$lib/server/drizzle';
 import { answers, polls, votes, type ResultVisibility } from '$lib/server/schema/poll';
 import { base64toUUID, sha256 } from '$lib/server/utils';
 import { users } from '$lib/server/schema/user';
+import { differenceInSeconds } from 'date-fns';
 
 export async function load({ params, getClientAddress, locals, cookies }) {
 	const session = await locals.auth.validate();
@@ -60,6 +61,14 @@ export async function load({ params, getClientAddress, locals, cookies }) {
 				.from(votes)
 				.where(and(eq(votes.pollId, poll.id), eq(votes.voterKey, voterKey)));
 			isVisible = userVoteResult.length > 0;
+		} else if (resultVisibility === 'after poll end') {
+			if (poll.closedAt) {
+				console.log(
+					'differenceInSeconds(poll.closedAt, new Date())',
+					differenceInSeconds(poll.closedAt, new Date())
+				);
+				isVisible = differenceInSeconds(poll.closedAt, new Date()) >= 0;
+			}
 		}
 
 		if (!isVisible) {
