@@ -26,8 +26,15 @@ export const polls = mySchema.table('polls', {
 	closedAt: timestamp('closed_at'),
 	status: varchar('status', {
 		length: 256
-	}).default('active')
+	}).default('active'),
+	resultVisibility: varchar('result_visibility', {
+		length: 256
+	}).default('public')
 });
+
+const resultVisibilityEnum = z.enum(['public', 'after vote', 'after poll end', 'creator']);
+
+export type ResultVisibility = z.infer<typeof resultVisibilityEnum>;
 
 export const insertPollSchema = createInsertSchema(polls, {
 	title: (schema) => schema.title.min(1, 'title is required').max(256, 'title is too long'),
@@ -48,7 +55,8 @@ export const insertPollSchema = createInsertSchema(polls, {
 	createdBy: (schema) => schema.createdBy.optional(),
 	createdAt: (schema) => schema.createdAt.optional(),
 	closedAt: (schema) => schema.closedAt.optional(),
-	status: () => z.enum(['active', 'draft']).optional()
+	status: () => z.enum(['active', 'draft']).optional(),
+	resultVisibility: () => resultVisibilityEnum.optional()
 });
 
 export const answers = mySchema.table('answers', {

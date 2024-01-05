@@ -16,23 +16,8 @@ export const actions: Actions = {
 		const session = await locals.auth.validate();
 		// if no session use browser session
 		const formdata = await request.formData();
-		console.log('formdata...', formdata);
-		const data = Object.fromEntries(formdata) as unknown as Record<
-			string,
-			string | number | Date | undefined
-		>;
-		data.answers = JSON.parse(data.answers as string);
-		data.maxChoice = parseInt(data.maxChoice as string);
-
-		if (data.closedAt) {
-			data.closedAt = parseISO(data.closedAt as string);
-		} else {
-			data.closedAt = undefined;
-		}
-
-		console.log('data', data);
+		const data = convertFormData(formdata);
 		const parsed = insertPollRequest.safeParse(data);
-		console.log('parsed', parsed);
 		if (!parsed.success) {
 			console.log('err', parsed.error);
 			const errors = Object.entries(parsed.error.flatten().fieldErrors)
@@ -86,17 +71,7 @@ export const actions: Actions = {
 
 			// input
 			const formdata = await request.formData();
-			const data = Object.fromEntries(formdata) as unknown as Record<
-				string,
-				string | number | Date | undefined
-			>;
-			data.answers = JSON.parse(data.answers as string);
-			data.maxChoice = parseInt(data.maxChoice as string);
-			if (data.closedAt) {
-				data.closedAt = parseISO(data.closedAt as string);
-			} else {
-				data.closedAt = undefined;
-			}
+			const data = convertFormData(formdata);
 
 			// validation
 			const parsed = insertPollRequest.safeParse(data);
@@ -137,6 +112,21 @@ export const actions: Actions = {
 	}
 };
 
+function convertFormData(formdata: FormData) {
+	const data = Object.fromEntries(formdata) as unknown as Record<
+		string,
+		string | number | Date | undefined
+	>;
+	data.answers = JSON.parse(data.answers as string);
+	data.maxChoice = parseInt(data.maxChoice as string);
+	if (data.closedAt) {
+		data.closedAt = parseISO(data.closedAt as string);
+	} else {
+		data.closedAt = undefined;
+	}
+	return data;
+}
+
 async function insertPoll(data: InsertPollRequest, creatorId: string) {
 	const res = await db.transaction(async (tx) => {
 		const poll = await tx
@@ -150,7 +140,8 @@ async function insertPoll(data: InsertPollRequest, creatorId: string) {
 				image: data.image,
 				createdBy: creatorId,
 				status: data.status,
-				closedAt: data.closedAt
+				closedAt: data.closedAt,
+				resultVisibility: data.resultVisibility
 			})
 			.returning({
 				id: polls.id

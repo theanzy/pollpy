@@ -19,7 +19,7 @@
 	import Select from './Select.svelte';
 	import XButton from './XButton.svelte';
 	import { page } from '$app/stores';
-	import type { PollWithAnswers } from '$lib/server/schema/poll';
+	import type { PollWithAnswers, ResultVisibility } from '$lib/server/schema/poll';
 	import ToggleBlock from './ToggleBlock.svelte';
 	import Checkbox from './Checkbox.svelte';
 	import DateTimePicker from './DateTimePicker.svelte';
@@ -61,18 +61,22 @@
 		pollImage = initialData.image || undefined;
 	}
 
-	const resultVisibilityOptions = [
+	const resultVisibilityOptions: { label: string; value: ResultVisibility }[] = [
 		{
 			label: 'Always public',
-			value: 'always public'
-		},
-		{
-			label: 'Public after end date',
-			value: 'public after end date'
+			value: 'public'
 		},
 		{
 			label: 'Public after vote',
-			value: 'public after vote'
+			value: 'after vote'
+		},
+		{
+			label: 'Public after poll end',
+			value: 'after poll end'
+		},
+		{
+			label: 'Only visible to creator',
+			value: 'creator'
 		}
 	];
 
@@ -345,6 +349,7 @@
 			<div class="md:flex-1 pl-3">
 				<label for="resultVisibility" class="mb-1">Result visibility</label>
 				<Select
+					value={initialData?.resultVisibility || undefined}
 					id="resultVisibility"
 					name="resultVisibility"
 					className="w-full"
