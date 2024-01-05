@@ -33,6 +33,7 @@ export async function load({ params, locals, cookies, depends }) {
 				identifyVoteBy: polls.identifyVoteBy,
 				status: polls.status,
 				closedAt: polls.closedAt,
+				resultVisibility: polls.resultVisibility,
 				answer: answers
 			})
 			.from(polls)
@@ -61,7 +62,7 @@ export async function load({ params, locals, cookies, depends }) {
 			.limit(1);
 		if (pollVotes.length) {
 			return {
-				error: 'Cannot delete this poll. There are already votes in this poll.',
+				error: 'Cannot edit this poll. There are already votes in this poll.',
 				poll: null
 			};
 		}
@@ -201,7 +202,8 @@ export const actions = {
 						maxChoice: data.maxChoice,
 						type: data.type,
 						identifyVoteBy: data.identifyVoteBy,
-						closedAt: data.closedAt
+						closedAt: data.closedAt,
+						resultVisibility: data.resultVisibility
 					})
 					.where(eq(polls.id, poll.id))
 					.returning({

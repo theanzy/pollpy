@@ -1,11 +1,12 @@
 import { and, eq, sql } from 'drizzle-orm';
 
 import { db } from '$lib/server/drizzle';
-import { answers, polls, votes } from '$lib/server/schema/poll';
-import { base64toUUID } from '$lib/server/utils';
+import { answers, polls, votes, type ResultVisibility } from '$lib/server/schema/poll';
+import { base64toUUID, sha256 } from '$lib/server/utils';
 import { users } from '$lib/server/schema/user';
 
-export async function load({ params }) {
+export async function load({ params, getClientAddress, locals, cookies }) {
+	const session = await locals.auth.validate();
 	const slug = params.slug;
 	const pollId = base64toUUID(slug);
 	try {
@@ -21,6 +22,7 @@ export async function load({ params }) {
 				createdBy: polls.createdBy,
 				createdAt: polls.createdAt,
 				closedAt: polls.closedAt,
+				resultVisibility: polls.resultVisibility,
 				creatorName: sql<string>`coalesce(${users.username}, 'a guest')`
 			})
 			.from(polls)
@@ -30,6 +32,44 @@ export async function load({ params }) {
 		if (!poll?.id) {
 			return {
 				pollResult: null
+			};
+		}
+
+		const resultVisibility = poll.resultVisibility as ResultVisibility;
+		let isVisible = resultVisibility === 'public';
+
+		// get voter key
+		let voterKey: string = '';
+		const identifyVoteBy = poll.identifyVoteBy;
+		const guestSessionId = cookies.get('pollpy_guest_session');
+		if (identifyVoteBy === 'ip') {
+			const ip = getClientAddress();
+			const ipHashed = await sha256(ip);
+			voterKey = ipHashed;
+		} else if (identifyVoteBy === 'cookie session') {
+			voterKey = guestSessionId ?? '';
+		} else if (identifyVoteBy === 'free user') {
+			voterKey = session?.user.userId ?? '';
+		}
+
+		if (resultVisibility === 'after vote') {
+			const userVoteResult = await db
+				.select({
+					id: votes.id
+				})
+				.from(votes)
+				.where(and(eq(votes.pollId, poll.id), eq(votes.voterKey, voterKey)));
+			isVisible = userVoteResult.length > 0;
+		}
+
+		if (!isVisible) {
+			return {
+				pollResult: {
+					isVisible: false,
+					poll,
+					result: [],
+					totalVotes: 0
+				}
 			};
 		}
 
@@ -53,7 +93,6 @@ export async function load({ params }) {
 			})
 			.from(answers)
 			.innerJoin(voteCountQuery, eq(answers.id, voteCountQuery.answerId));
-		console.log('result', result);
 		if (result.length === 0) {
 			return {
 				pollResult: null
@@ -62,8 +101,10 @@ export async function load({ params }) {
 		const totalVotes = result.reduce((total, r) => {
 			return r.count + total;
 		}, 0);
+
 		return {
 			pollResult: {
+				isVisible: true,
 				poll,
 				result,
 				totalVotes

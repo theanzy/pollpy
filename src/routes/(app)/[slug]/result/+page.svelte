@@ -17,6 +17,12 @@
 				by {pollResult.poll.creatorName} <span class="mx-1">·</span>
 				{dateMoment(pollResult.poll.createdAt, new Date())}
 			</p>
+			{#if !pollResult.isVisible}
+				<p class="text-amber-500 text-center mt-4 text-sm">
+					The result for this poll is not available at the moment
+				</p>
+			{/if}
+			<p></p>
 		</div>
 		{#if pollResult.poll.type === 'text'}
 			<div class="flex flex-col md:flex-row gap-5">

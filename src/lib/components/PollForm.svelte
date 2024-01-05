@@ -317,7 +317,7 @@
 		</button>
 		<div
 			slot="content"
-			class="py-3 flex flex-col md:flex-row w-full gap-4 divide-x divide-surface-700"
+			class="py-3 flex flex-col md:flex-row w-full gap-4 md:divide-x md:divide-surface-700"
 		>
 			<div class="flex flex-col gap-4 md:flex-1 pr-3 text-surface-100">
 				<div class="flex flex-col gap-4">
@@ -346,7 +346,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="md:flex-1 pl-3">
+			<div class="md:flex-1 md:pl-3">
 				<label for="resultVisibility" class="mb-1">Result visibility</label>
 				<Select
 					value={initialData?.resultVisibility || undefined}
