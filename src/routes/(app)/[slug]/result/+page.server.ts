@@ -69,6 +69,9 @@ export async function load({ params, getClientAddress, locals, cookies }) {
 				);
 				isVisible = differenceInSeconds(poll.closedAt, new Date()) >= 0;
 			}
+		} else if (resultVisibility === 'creator') {
+			const creatorId = session?.user.userId ?? guestSessionId;
+			isVisible = poll.createdBy === creatorId;
 		}
 
 		if (!isVisible) {
