@@ -1,4 +1,4 @@
-import { timestamp, integer, text, uuid, varchar, unique } from 'drizzle-orm/pg-core';
+import { timestamp, integer, text, uuid, varchar, unique, jsonb } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -29,7 +29,10 @@ export const polls = mySchema.table('polls', {
 	}).default('active'),
 	resultVisibility: varchar('result_visibility', {
 		length: 256
-	}).default('public')
+	}).default('public'),
+	flags: jsonb('flags').default({
+		allowShareButton: false
+	})
 });
 
 const resultVisibilityEnum = z.enum(['public', 'after vote', 'after poll end', 'creator']);
@@ -53,10 +56,16 @@ export const insertPollSchema = createInsertSchema(polls, {
 			required_error: 'identifyVoteBy is required'
 		}),
 	createdBy: (schema) => schema.createdBy.optional(),
-	createdAt: (schema) => schema.createdAt.optional(),
+	createdAt: (schema) => schema.createdAt,
 	closedAt: (schema) => schema.closedAt.optional(),
 	status: () => z.enum(['active', 'draft']).optional(),
-	resultVisibility: () => resultVisibilityEnum.optional()
+	resultVisibility: () => resultVisibilityEnum.optional(),
+	flags: () =>
+		z
+			.object({
+				allowShareButton: z.boolean()
+			})
+			.optional()
 });
 
 export const answers = mySchema.table('answers', {
@@ -154,7 +163,7 @@ export const votes = mySchema.table(
 	}
 );
 
-export type PollWithAnswers = typeof polls.$inferSelect & {
+export type PollWithAnswers = z.infer<typeof insertPollSchema> & {
 	answers: (typeof answers.$inferSelect)[];
 	creatorName: string;
 };

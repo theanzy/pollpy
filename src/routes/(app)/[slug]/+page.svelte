@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import ActivatePollButton from '$lib/components/ActivatePollButton.svelte';
 	import MoreOptionsButton from '$lib/components/MoreOptionsButton.svelte';
-	import ShareVoteButton from '$lib/components/SharePollButton.svelte';
+	import SharePollButton from '$lib/components/SharePollButton.svelte';
 	import { dateMoment } from '$lib/utils';
 	import { differenceInSeconds } from 'date-fns';
 	import toast from 'svelte-french-toast';
@@ -94,10 +94,12 @@
 					>
 				{/if}
 			</div>
-			<p class="text-sm text-surface-300">
-				by {poll.creatorName} <span class="mx-1">·</span>
-				{dateMoment(poll.createdAt, new Date())}
-			</p>
+			{#if poll.createdAt}
+				<p class="text-sm text-surface-300">
+					by {poll.creatorName} <span class="mx-1">·</span>
+					{dateMoment(poll.createdAt, new Date())}
+				</p>
+			{/if}
 			{#if poll.description}
 				<p class="mt-1 text-sm text-surface-100">{poll.description}</p>
 			{/if}
@@ -222,7 +224,9 @@
 						</svg>
 						See Results
 					</button>
-					<ShareVoteButton class="w-full md:w-[150px] mt-1 md:mt-0" slug={$page.params.slug} />
+					{#if poll.flags?.allowShareButton}
+						<SharePollButton class="w-full md:w-[150px] mt-1 md:mt-0" slug={$page.params.slug} />
+					{/if}
 				</div>
 			{/if}
 		</form>

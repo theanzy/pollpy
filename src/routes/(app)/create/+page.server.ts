@@ -17,6 +17,7 @@ export const actions: Actions = {
 		// if no session use browser session
 		const formdata = await request.formData();
 		const data = convertFormData(formdata);
+
 		const parsed = insertPollRequest.safeParse(data);
 		if (!parsed.success) {
 			console.log('err', parsed.error);
@@ -113,10 +114,7 @@ export const actions: Actions = {
 };
 
 function convertFormData(formdata: FormData) {
-	const data = Object.fromEntries(formdata) as unknown as Record<
-		string,
-		string | number | Date | undefined
-	>;
+	const data = Object.fromEntries(formdata) as unknown as Record<string, unknown>;
 	data.answers = JSON.parse(data.answers as string);
 	data.maxChoice = parseInt(data.maxChoice as string);
 	if (data.closedAt) {
@@ -124,6 +122,10 @@ function convertFormData(formdata: FormData) {
 	} else {
 		data.closedAt = undefined;
 	}
+	console.log('hideShareButton', data.hideShareButton);
+	data.flags = {
+		allowShareButton: data.hideShareButton === undefined
+	};
 	return data;
 }
 
@@ -141,7 +143,8 @@ async function insertPoll(data: InsertPollRequest, creatorId: string) {
 				createdBy: creatorId,
 				status: data.status,
 				closedAt: data.closedAt,
-				resultVisibility: data.resultVisibility
+				resultVisibility: data.resultVisibility,
+				flags: data.flags
 			})
 			.returning({
 				id: polls.id

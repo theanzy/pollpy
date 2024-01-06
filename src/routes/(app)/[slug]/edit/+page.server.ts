@@ -34,7 +34,8 @@ export async function load({ params, locals, cookies, depends }) {
 				status: polls.status,
 				closedAt: polls.closedAt,
 				resultVisibility: polls.resultVisibility,
-				answer: answers
+				answer: answers,
+				flags: polls.flags
 			})
 			.from(polls)
 			.leftJoin(users, eq(users.id, polls.createdBy))
@@ -122,10 +123,7 @@ export const actions = {
 
 			// input validation
 			const form = await request.formData();
-			const formdata = Object.fromEntries(form) as unknown as Record<
-				string,
-				string | number | Date | undefined
-			>;
+			const formdata = Object.fromEntries(form) as unknown as Record<string, unknown>;
 			formdata.answers = JSON.parse(formdata.answers as string);
 			formdata.maxChoice = parseInt(formdata.maxChoice as string);
 			if (formdata.closedAt) {
@@ -133,6 +131,10 @@ export const actions = {
 			} else {
 				formdata.closedAt = undefined;
 			}
+			console.log('hide', formdata.hideShareButton);
+			formdata.flags = {
+				allowShareButton: formdata.hideShareButton === undefined
+			};
 
 			const parsed = updatePollRequest.safeParse(formdata);
 			if (parsed.success === false) {
@@ -203,7 +205,8 @@ export const actions = {
 						type: data.type,
 						identifyVoteBy: data.identifyVoteBy,
 						closedAt: data.closedAt,
-						resultVisibility: data.resultVisibility
+						resultVisibility: data.resultVisibility,
+						flags: data.flags
 					})
 					.where(eq(polls.id, poll.id))
 					.returning({

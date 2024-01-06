@@ -81,13 +81,15 @@
 			Poll Settings
 		</button>
 		{#if poll.status === 'active'}
-			<SharePollButton
-				on:click={() => {
-					menuOpen = false;
-				}}
-				class="bg-transparent justify-start text-base border-none text-surface-200"
-				{slug}
-			/>
+			{#if poll.flags?.allowShareButton}
+				<SharePollButton
+					on:click={() => {
+						menuOpen = false;
+					}}
+					class="bg-transparent justify-start text-base border-none text-surface-200"
+					{slug}
+				/>
+			{/if}
 		{/if}
 		<hr class="border-b border-transparent border-b-surface-600" />
 		<DeletePollButton

@@ -1,0 +1,1 @@
+ALTER TABLE "pollpy"."polls" ADD COLUMN "flags" jsonb DEFAULT '{"allowShareButton":false}'::jsonb;

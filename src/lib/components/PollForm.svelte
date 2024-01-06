@@ -342,7 +342,11 @@
 					</ToggleBlock>
 					<div class="flex flex-row justify-between">
 						<label for="hideShareButton">Hide share button</label>
-						<Checkbox id="hideShareButton" name="hideShareButton" />
+						<Checkbox
+							isChecked={initialData?.flags?.allowShareButton === false}
+							id="hideShareButton"
+							name="hideShareButton"
+						/>
 					</div>
 				</div>
 			</div>

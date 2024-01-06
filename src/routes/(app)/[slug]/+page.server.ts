@@ -25,7 +25,8 @@ export async function load({ params, locals, cookies, depends }) {
 				identifyVoteBy: polls.identifyVoteBy,
 				status: polls.status,
 				answer: answers,
-				closedAt: polls.closedAt
+				closedAt: polls.closedAt,
+				flags: polls.flags
 			})
 			.from(polls)
 			.leftJoin(users, eq(users.id, polls.createdBy))
