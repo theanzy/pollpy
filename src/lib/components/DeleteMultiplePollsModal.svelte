@@ -4,7 +4,7 @@
 	import Modal from './Modal.svelte';
 	import { deserialize } from '$app/forms';
 	import toast from 'svelte-french-toast';
-	import { goto } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	let loading = false;
 
 	async function handleSubmit(e: Event & { currentTarget: EventTarget & HTMLFormElement }) {
@@ -32,7 +32,8 @@
 				form.reset();
 				toast.success('Polls deleted.');
 			}
-			goto('/');
+			await invalidate('/polls');
+			deleteMultipleModalStore.closeModal();
 		} catch (error) {
 			console.log('delete polls error', error);
 			if (error instanceof Error) {

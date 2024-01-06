@@ -20,6 +20,11 @@
 	];
 	$: ({ polls } = data);
 	let checkedIds: string[] = [];
+	$: {
+		if (checkedIds.find((id) => !polls?.find((p) => p.id === id))) {
+			checkedIds = [];
+		}
+	}
 	$: status = $page.url.searchParams.get('status') ?? 'active';
 </script>
 

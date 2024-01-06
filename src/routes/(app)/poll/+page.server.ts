@@ -4,7 +4,8 @@ import { uuidToBase64 } from '$lib/server/utils.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 
-export async function load({ locals, url }) {
+export async function load({ locals, url, depends }) {
+	depends('/polls');
 	const session = await locals.auth.validate();
 	if (!session?.user) {
 		throw redirect(301, '/');
