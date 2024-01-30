@@ -116,6 +116,7 @@
 				expanded = false;
 			}
 		}}
+		class="z-10"
 	>
 		<ul
 			role="listbox"
@@ -125,7 +126,7 @@
 				opacity: 0
 			}}
 			on:keydown={handleKeySelect}
-			class="z-10 bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
+			class="bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
 		>
 			{#each items as item (item.value)}
 				{@const selected = value === item.value}
