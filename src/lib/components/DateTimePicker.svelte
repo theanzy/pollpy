@@ -16,6 +16,7 @@
 		setMinutes,
 		setHours
 	} from 'date-fns';
+	import { scale } from 'svelte/transition';
 
 	type SelectMode = 'day' | 'month' | 'year';
 	export let required = false;
@@ -182,253 +183,262 @@
 				]
 			}
 		}}
-		class="bg-neutral-900 p-2 rounded shadow max-w-max text-sm flex flex-row gap-3 select-none z-10"
+		class="z-10"
 	>
-		<div>
-			<div class="flex flex-row justify-between py-2">
-				<button
-					aria-label="to previous month"
-					on:click={toPrevious}
-					type="button"
-					class="grid place-items-center text-neutral-300 enabled:hover:text-white enabled:hover:bg-neutral-700 w-6 h-6 rounded-full"
-				>
-					<svg
-						class="w-4 h-4"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 256 256"
-						><path
-							fill="currentColor"
-							d="M165.66 202.34a8 8 0 0 1-11.32 11.32l-80-80a8 8 0 0 1 0-11.32l80-80a8 8 0 0 1 11.32 11.32L91.31 128Z"
-						/></svg
-					>
-				</button>
-				{#if selectMode === 'day'}
+		<div
+			class="bg-neutral-900 p-2 rounded shadow max-w-max text-sm flex flex-row gap-3 select-none"
+			transition:scale={{
+				duration: 200,
+				start: 0.95,
+				opacity: 0.1
+			}}
+		>
+			<div>
+				<div class="flex flex-row justify-between py-2">
 					<button
+						aria-label="to previous month"
+						on:click={toPrevious}
 						type="button"
-						class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
-						aria-label="select month"
-						on:click={() => {
-							if (selectMode === 'day') {
-								selectMode = 'month';
-							} else {
-								selectMode = 'day';
-							}
-						}}
+						class="grid place-items-center text-neutral-300 enabled:hover:text-white enabled:hover:bg-neutral-700 w-6 h-6 rounded-full"
 					>
-						<time>{format(new Date(year, month, 1), 'MMMM yyyy')}</time>
-					</button>
-				{:else if selectMode === 'month'}
-					<button
-						type="button"
-						class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
-						aria-label="select month"
-						on:click={() => {
-							if (selectMode === 'month') {
-								selectMode = 'year';
-							} else {
-								selectMode = 'month';
-							}
-						}}
-					>
-						<time>{format(new Date(year, month, 1), 'yyyy')}</time>
-					</button>
-				{:else}
-					<button
-						type="button"
-						class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
-						aria-label="select month"
-						on:click={() => {
-							if (selectMode === 'month') {
-								selectMode = 'year';
-							} else {
-								selectMode = 'month';
-							}
-						}}
-					>
-						<time>{years[0]} - {years[years.length - 1]}</time>
-					</button>
-				{/if}
-				<button
-					aria-label="to next month"
-					type="button"
-					class="grid place-items-center text-neutral-300 enabled:hover:text-white enabled:hover:bg-neutral-700 w-6 h-6 rounded-full"
-					on:click={toNext}
-				>
-					<svg
-						class="w-4 h-4"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 256 256"
-						><g transform="translate(256 0) scale(-1 1)"
+						<svg
+							class="w-4 h-4"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 256 256"
 							><path
 								fill="currentColor"
 								d="M165.66 202.34a8 8 0 0 1-11.32 11.32l-80-80a8 8 0 0 1 0-11.32l80-80a8 8 0 0 1 11.32 11.32L91.31 128Z"
-							/></g
-						></svg
+							/></svg
+						>
+					</button>
+					{#if selectMode === 'day'}
+						<button
+							type="button"
+							class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
+							aria-label="select month"
+							on:click={() => {
+								if (selectMode === 'day') {
+									selectMode = 'month';
+								} else {
+									selectMode = 'day';
+								}
+							}}
+						>
+							<time>{format(new Date(year, month, 1), 'MMMM yyyy')}</time>
+						</button>
+					{:else if selectMode === 'month'}
+						<button
+							type="button"
+							class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
+							aria-label="select month"
+							on:click={() => {
+								if (selectMode === 'month') {
+									selectMode = 'year';
+								} else {
+									selectMode = 'month';
+								}
+							}}
+						>
+							<time>{format(new Date(year, month, 1), 'yyyy')}</time>
+						</button>
+					{:else}
+						<button
+							type="button"
+							class="outline-none transition px-1 enabled:hover:bg-neutral-700 rounded"
+							aria-label="select month"
+							on:click={() => {
+								if (selectMode === 'month') {
+									selectMode = 'year';
+								} else {
+									selectMode = 'month';
+								}
+							}}
+						>
+							<time>{years[0]} - {years[years.length - 1]}</time>
+						</button>
+					{/if}
+					<button
+						aria-label="to next month"
+						type="button"
+						class="grid place-items-center text-neutral-300 enabled:hover:text-white enabled:hover:bg-neutral-700 w-6 h-6 rounded-full"
+						on:click={toNext}
 					>
-				</button>
-			</div>
-			{#if selectMode === 'day'}
-				<div class="grid text-neutral-200 w-60 h-60">
-					<span class="flex items-center justify-center">Su</span>
-					<span class="flex items-center justify-center grid-cols-2">Mo</span>
-					<span class="flex items-center justify-center grid-cols-3">Tu</span>
-					<span class="flex items-center justify-center grid-cols-4">We</span>
-					<span class="flex items-center justify-center grid-cols-5">Th</span>
-					<span class="flex items-center justify-center grid-cols-6">Fr</span>
-					<span class="flex items-center justify-center grid-cols-7">Sa</span>
-					{#each days as day (day.toString())}
-						{@const dayofweek = getDay(day)}
-						<button
-							type="button"
-							class={cn(
-								'text-neutral-50 w-8 h-8 rounded-full transition outline-none focus-visible:bg-neutral-700 focus-visible:text-white',
-								'enabled:hover:bg-neutral-700 enabled:hover:text-white',
-								colStart[dayofweek],
-								getMonth(day) !== month && 'text-neutral-600',
-								selectedDay && isSameDay(day, selectedDay) && 'bg-sky-600'
-							)}
-							on:click={() => {
-								month = getMonth(day);
-								year = getYear(day);
-								selectedDay = day;
-							}}
+						<svg
+							class="w-4 h-4"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 256 256"
+							><g transform="translate(256 0) scale(-1 1)"
+								><path
+									fill="currentColor"
+									d="M165.66 202.34a8 8 0 0 1-11.32 11.32l-80-80a8 8 0 0 1 0-11.32l80-80a8 8 0 0 1 11.32 11.32L91.31 128Z"
+								/></g
+							></svg
 						>
-							{day.getDate()}
-						</button>
-					{/each}
+					</button>
 				</div>
-			{:else if selectMode === 'month'}
-				<div class="grid grid-cols-3 w-60 h-60 gap-2">
-					{#each months as m}
-						<button
-							type="button"
-							class="grid rounded place-items-center transition {month === m
-								? 'bg-sky-600'
-								: 'hover:bg-neutral-700'}"
-							on:click={() => {
-								month = m;
-								selectMode = 'day';
-								selectedDay = null;
-							}}
-						>
-							{format(new Date(1999, m, 1), 'MMM')}
-						</button>
-					{/each}
-				</div>
-			{:else if selectMode === 'year'}
-				<div class="grid grid-cols-3 w-60 h-60 gap-2">
-					{#each years as y}
-						<button
-							type="button"
-							class="grid rounded place-items-center transition {year === y
-								? 'bg-sky-600'
-								: 'hover:bg-neutral-700'}"
-							on:click={() => {
-								year = y;
-								selectMode = 'month';
-							}}
-						>
-							{format(new Date(y, 1, 1), 'yyyy')}
-						</button>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		<div class="flex flex-row gap-1">
-			<div>
-				<p class="text-center font-medium text-neutral-500 py-1">HH</p>
-				<div class="h-full overflow-hidden relative max-h-60 w-8">
-					<div
-						class="absolute flex flex-col overflow-y-scroll inset-0 right-[-4px] md:right-[-17px]"
-						on:scroll={(e) => {
-							const height = e.currentTarget.scrollHeight;
-
-							if (e.currentTarget.scrollTop === 0) {
-								e.currentTarget.scroll({
-									top: height * 0.45
-								});
-							} else if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= height) {
-								e.currentTarget.scroll({
-									top: height * 0.2
-								});
-							}
-						}}
-					>
-						{#each hours.concat(hours) as h}
+				{#if selectMode === 'day'}
+					<div class="grid text-neutral-200 w-60 h-60">
+						<span class="flex items-center justify-center">Su</span>
+						<span class="flex items-center justify-center grid-cols-2">Mo</span>
+						<span class="flex items-center justify-center grid-cols-3">Tu</span>
+						<span class="flex items-center justify-center grid-cols-4">We</span>
+						<span class="flex items-center justify-center grid-cols-5">Th</span>
+						<span class="flex items-center justify-center grid-cols-6">Fr</span>
+						<span class="flex items-center justify-center grid-cols-7">Sa</span>
+						{#each days as day (day.toString())}
+							{@const dayofweek = getDay(day)}
 							<button
 								type="button"
-								use:scrollToSelected={selectedHour === h}
-								on:click={(e) => {
-									selectedHour = h;
-									const parent = e.currentTarget.parentElement;
-									parent?.scroll({
-										top: e.currentTarget.offsetTop
-									});
+								class={cn(
+									'text-neutral-50 w-8 h-8 rounded-full transition outline-none focus-visible:bg-neutral-700 focus-visible:text-white',
+									'enabled:hover:bg-neutral-700 enabled:hover:text-white',
+									colStart[dayofweek],
+									getMonth(day) !== month && 'text-neutral-600',
+									selectedDay && isSameDay(day, selectedDay) && 'bg-sky-600'
+								)}
+								on:click={() => {
+									month = getMonth(day);
+									year = getYear(day);
+									selectedDay = day;
 								}}
-								class="transition {selectedHour === h ? 'bg-sky-600' : 'hover:bg-neutral-700'}  p-1"
-								>{h}</button
 							>
-						{/each}
-					</div>
-				</div>
-			</div>
-			<div>
-				<p class="text-center font-medium text-neutral-500 py-1">MM</p>
-				<div class="h-full overflow-hidden relative max-h-60 w-8">
-					<div
-						class="absolute flex flex-col overflow-y-scroll inset-0 right-[-4px] md:right-[-17px]"
-						on:scroll={(e) => {
-							const height = e.currentTarget.scrollHeight;
-							if (e.currentTarget.scrollTop === 0) {
-								e.currentTarget.scroll({
-									top: height / 2.02
-								});
-							} else if (e.currentTarget.scrollTop + e.currentTarget.offsetHeight >= height) {
-								e.currentTarget.scroll({
-									top: height * 0.405
-								});
-							}
-						}}
-					>
-						{#each minutes.concat(minutes) as m}
-							<button
-								use:scrollToSelected={selectedMinute === m}
-								on:click={(e) => {
-									selectedMinute = m;
-									const parent = e.currentTarget.parentElement;
-									parent?.scroll({
-										top: e.currentTarget.offsetTop
-									});
-								}}
-								class="transition p-1 {selectedMinute === m
-									? 'bg-sky-600'
-									: 'hover:bg-neutral-700'}"
-								type="button"
-							>
-								{m.toString().padStart(2, '0')}
+								{day.getDate()}
 							</button>
 						{/each}
 					</div>
-				</div>
+				{:else if selectMode === 'month'}
+					<div class="grid grid-cols-3 w-60 h-60 gap-2">
+						{#each months as m}
+							<button
+								type="button"
+								class="grid rounded place-items-center transition {month === m
+									? 'bg-sky-600'
+									: 'hover:bg-neutral-700'}"
+								on:click={() => {
+									month = m;
+									selectMode = 'day';
+									selectedDay = null;
+								}}
+							>
+								{format(new Date(1999, m, 1), 'MMM')}
+							</button>
+						{/each}
+					</div>
+				{:else if selectMode === 'year'}
+					<div class="grid grid-cols-3 w-60 h-60 gap-2">
+						{#each years as y}
+							<button
+								type="button"
+								class="grid rounded place-items-center transition {year === y
+									? 'bg-sky-600'
+									: 'hover:bg-neutral-700'}"
+								on:click={() => {
+									year = y;
+									selectMode = 'month';
+								}}
+							>
+								{format(new Date(y, 1, 1), 'yyyy')}
+							</button>
+						{/each}
+					</div>
+				{/if}
 			</div>
-			<div class="flex flex-col justify-center gap-1">
-				{#each meridiems as mm}
-					<button
-						type="button"
-						class="transition py-1 px-2 {selectedMeridiem === mm
-							? 'bg-sky-600'
-							: 'hover:bg-neutral-700'}"
-						on:click={() => {
-							selectedMeridiem = mm;
-						}}
-					>
-						{mm}
-					</button>
-				{/each}
+			<div class="flex flex-row gap-1">
+				<div>
+					<p class="text-center font-medium text-neutral-500 py-1">HH</p>
+					<div class="h-full overflow-hidden relative max-h-60 w-8">
+						<div
+							class="absolute flex flex-col overflow-y-scroll inset-0 right-[-4px] md:right-[-17px]"
+							on:scroll={(e) => {
+								const height = e.currentTarget.scrollHeight;
+								if (e.currentTarget.scrollTop === 0) {
+									e.currentTarget.scroll({
+										top: height * 0.45
+									});
+								} else if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= height) {
+									e.currentTarget.scroll({
+										top: height * 0.2
+									});
+								}
+							}}
+						>
+							{#each hours.concat(hours) as h}
+								<button
+									type="button"
+									use:scrollToSelected={selectedHour === h}
+									on:click={(e) => {
+										selectedHour = h;
+										const parent = e.currentTarget.parentElement;
+										parent?.scroll({
+											top: e.currentTarget.offsetTop
+										});
+									}}
+									class="transition {selectedHour === h
+										? 'bg-sky-600'
+										: 'hover:bg-neutral-700'}  p-1">{h}</button
+								>
+							{/each}
+						</div>
+					</div>
+				</div>
+				<div>
+					<p class="text-center font-medium text-neutral-500 py-1">MM</p>
+					<div class="h-full overflow-hidden relative max-h-60 w-8">
+						<div
+							class="absolute flex flex-col overflow-y-scroll inset-0 right-[-4px] md:right-[-17px]"
+							on:scroll={(e) => {
+								const height = e.currentTarget.scrollHeight;
+								if (e.currentTarget.scrollTop === 0) {
+									e.currentTarget.scroll({
+										top: height / 2.02
+									});
+								} else if (e.currentTarget.scrollTop + e.currentTarget.offsetHeight >= height) {
+									e.currentTarget.scroll({
+										top: height * 0.405
+									});
+								}
+							}}
+						>
+							{#each minutes.concat(minutes) as m}
+								<button
+									use:scrollToSelected={selectedMinute === m}
+									on:click={(e) => {
+										selectedMinute = m;
+										const parent = e.currentTarget.parentElement;
+										parent?.scroll({
+											top: e.currentTarget.offsetTop
+										});
+									}}
+									class="transition p-1 {selectedMinute === m
+										? 'bg-sky-600'
+										: 'hover:bg-neutral-700'}"
+									type="button"
+								>
+									{m.toString().padStart(2, '0')}
+								</button>
+							{/each}
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-col justify-center gap-1">
+					{#each meridiems as mm}
+						<button
+							type="button"
+							class="transition py-1 px-2 {selectedMeridiem === mm
+								? 'bg-sky-600'
+								: 'hover:bg-neutral-700'}"
+							on:click={() => {
+								selectedMeridiem = mm;
+							}}
+						>
+							{mm}
+						</button>
+					{/each}
+				</div>
 			</div>
 		</div>
 	</div>
