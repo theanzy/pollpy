@@ -3,7 +3,6 @@
 	import createPopperAction from '$lib/popover';
 	import CreatePollLink from './CreatePollLink.svelte';
 	import SignoutLink from './SignoutLink.svelte';
-	import { fadeFly } from '$lib/transitions';
 	import { fade } from 'svelte/transition';
 	import PollsLink from './PollsLink.svelte';
 

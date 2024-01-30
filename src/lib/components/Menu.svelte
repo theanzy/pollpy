@@ -5,9 +5,10 @@
 	import SignoutLink from './SignoutLink.svelte';
 	import LoginLink from './LoginLink.svelte';
 	import SignupLink from './SignupLink.svelte';
-	import { fadeFly } from '$lib/transitions';
 	import { afterNavigate } from '$app/navigation';
 	import PollsLink from './PollsLink.svelte';
+	import { fly } from 'svelte/transition';
+	import { browser } from '$app/environment';
 
 	export let user: User | undefined;
 
@@ -15,6 +16,18 @@
 	afterNavigate(() => {
 		open = false;
 	});
+
+	function useHideOverflowY(elem: HTMLDivElement) {
+		if (elem) {
+			document.body.style.overflowY = 'hidden';
+		}
+	}
+
+	$: if (!open) {
+		if (browser) {
+			document.body.style.overflowY = 'auto';
+		}
+	}
 </script>
 
 <button
@@ -47,11 +60,15 @@
 	}}
 />
 {#if open}
-	<div use:trapFocus class="bg-black/20 fixed inset-0 w-full h-full grid place-items-center z-10">
+	<div
+		use:trapFocus
+		use:useHideOverflowY
+		class="bg-black/20 fixed inset-0 w-full h-full grid place-items-center z-10"
+	>
 		<div
 			class="bg-surface-950 w-full h-[100dvh] flex flex-col rounded relative"
-			transition:fadeFly={{
-				x: 200,
+			transition:fly={{
+				x: 50,
 				duration: 200
 			}}
 		>
