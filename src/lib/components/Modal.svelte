@@ -5,7 +5,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import XButton from './XButton.svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { fly } from 'svelte/transition';
+	import { fly, scale } from 'svelte/transition';
 	export let open = false;
 	export let closeButton = false;
 
@@ -45,10 +45,10 @@
 	>
 		<div
 			class="bg-surface-800 border border-surface-700 w-[94dvw] lg:w-auto lg:h-auto mx-auto my-auto shadow flex flex-col rounded relative overflow-auto"
-			transition:fly={{
+			transition:scale={{
 				duration: 200,
 				opacity: 0.1,
-				y: 5
+				start: 0.95
 			}}
 		>
 			{#if closeButton}
