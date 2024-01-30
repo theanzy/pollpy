@@ -2,7 +2,7 @@
 	import createPopperAction from '$lib/popover';
 	import { cn } from '$lib/utils';
 	import { createEventDispatcher, type ComponentType } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, scale } from 'svelte/transition';
 
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
 
@@ -98,8 +98,7 @@
 	</span>
 </button>
 {#if expanded}
-	<ul
-		role="listbox"
+	<div
 		aria-expanded={expanded}
 		use:usePopperContent={{
 			params: {
@@ -117,54 +116,60 @@
 				expanded = false;
 			}
 		}}
-		transition:fade={{
-			duration: 200
-		}}
-		on:keydown={handleKeySelect}
-		class="z-10 bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
 	>
-		{#each items as item (item.value)}
-			{@const selected = value === item.value}
-			<li
-				tabindex="0"
-				role="option"
-				use:focus={selected}
-				on:keydown={(e) => {
-					if (e.key === 'Enter') {
+		<ul
+			role="listbox"
+			transition:scale={{
+				duration: 200,
+				start: 0.99,
+				opacity: 0
+			}}
+			on:keydown={handleKeySelect}
+			class="z-10 bg-surface-900 rounded py-1 border border-surface-600 max-h-40 overflow-hidden"
+		>
+			{#each items as item (item.value)}
+				{@const selected = value === item.value}
+				<li
+					tabindex="0"
+					role="option"
+					use:focus={selected}
+					on:keydown={(e) => {
+						if (e.key === 'Enter') {
+							value = item.value;
+							dispatch('change', value);
+							expanded = false;
+						}
+					}}
+					on:click={() => {
 						value = item.value;
 						dispatch('change', value);
 						expanded = false;
-					}
-				}}
-				on:click={() => {
-					value = item.value;
-					dispatch('change', value);
-					expanded = false;
-				}}
-				aria-selected={selected}
-				aria-label={item.label}
-				class="relative flex flex-row items-center font-medium px-4 py-2 select-none outline-none transition focus:bg-primary-700 focus:text-white"
-			>
-				<svelte:component this={item.icon} class="w-6 h-6 mr-2" />
-				<span>{item.label}</span>
-				{#if selected}
-					<span class="ml-auto mr-1">
-						<svg
-							class="w-5 h-5"
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							><path
-								fill="currentColor"
-								d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"
-							/>
-						</svg>
-					</span>
-				{/if}
-			</li>
-		{/each}
-	</ul>
+					}}
+					aria-selected={selected}
+					aria-label={item.label}
+					class="relative flex flex-row items-center font-medium px-4 py-2 select-none outline-none transition focus:bg-primary-700 focus:text-white"
+				>
+					<svelte:component this={item.icon} class="w-6 h-6 mr-2" />
+					<span>{item.label}</span>
+					{#if selected}
+						<span class="ml-auto mr-1">
+							<svg
+								class="w-5 h-5"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								><path
+									fill="currentColor"
+									d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"
+								/>
+							</svg>
+						</span>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	</div>
 {/if}
 
 <select {id} {name} bind:value hidden>
