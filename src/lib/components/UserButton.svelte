@@ -3,7 +3,7 @@
 	import createPopperAction from '$lib/popover';
 	import CreatePollLink from './CreatePollLink.svelte';
 	import SignoutLink from './SignoutLink.svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, scale } from 'svelte/transition';
 	import PollsLink from './PollsLink.svelte';
 
 	const [usePopperTrigger, usePopperContent] = createPopperAction();
@@ -43,7 +43,7 @@
 </button>
 {#if open}
 	<div
-		transition:fade={{ duration: 200 }}
+		class="z-10"
 		use:usePopperContent={{
 			onClickOutside() {
 				open = false;
@@ -60,22 +60,26 @@
 				]
 			}
 		}}
-		role="menu"
-		class="[&>*]:px-4 py-3 max-w-sm min-w-[300px] rounded-sm shadow bg-surface-950 border border-surface-700 z-10"
 	>
-		<div>
-			<h2
-				aria-label="User name"
-				class="font-medium text-surface-100 truncate text-ellipsis w-full max-w-full text-lg"
-			>
-				{user.username}
-			</h2>
-			<p class="text-sm text-surface-300">pollpy user</p>
+		<div
+			transition:scale={{ opacity: 0, start: 0.95, duration: 200 }}
+			role="menu"
+			class="[&>*]:px-4 py-3 max-w-sm min-w-[300px] rounded-sm shadow bg-surface-950 border border-surface-700"
+		>
+			<div>
+				<h2
+					aria-label="User name"
+					class="font-medium text-surface-100 truncate text-ellipsis w-full max-w-full text-lg"
+				>
+					{user.username}
+				</h2>
+				<p class="text-sm text-surface-300">pollpy user</p>
+			</div>
+			<hr class="border-transparent border-b border-b-surface-700 mt-3 mb-1 mx-1" />
+			<CreatePollLink class="py-2" />
+			<PollsLink />
+			<hr class="border-transparent border-b border-b-surface-700 my-2 mx-1" />
+			<SignoutLink />
 		</div>
-		<hr class="border-transparent border-b border-b-surface-700 mt-3 mb-1 mx-1" />
-		<CreatePollLink class="py-2" />
-		<PollsLink />
-		<hr class="border-transparent border-b border-b-surface-700 my-2 mx-1" />
-		<SignoutLink />
 	</div>
 {/if}
